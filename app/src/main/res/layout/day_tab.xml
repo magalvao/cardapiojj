@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+              android:orientation="vertical"
+              android:background="@color/red"
+              android:layout_width="match_parent"
+              android:layout_height="match_parent">
+    <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
+        android:text="Day Title"
+              android:gravity="center_horizontal"
+              android:layout_marginTop="@dimen/spacing_normal"
+              android:textStyle="bold"
+              android:textColor="@color/white"
+              android:id="@+id/date_title"
+    />
+
+    <android.support.v7.widget.RecyclerView
+        android:id="@+id/mealsList"
+        android:layout_width="match_parent"
+        android:background="@color/transparent"
+        android:padding="@dimen/spacing_small"
+        android:layout_height="match_parent" />
+
+    <Button android:layout_width="match_parent" android:layout_height="wrap_content"
+            android:text="Almocei fora hoje"
+            android:layout_margin="24dp"
+            android:visibility="gone"
+            android:id="@+id/btnLunchOut"
+    />
+</LinearLayout>
