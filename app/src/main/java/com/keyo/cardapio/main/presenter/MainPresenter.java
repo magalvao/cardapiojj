@@ -40,10 +40,7 @@ public class MainPresenter extends BasePresenter {
         mCardapioDAO.setErrorListener(new CardapioError());
     }
 
-    @Override
-    public void onResume() {
-        super.onResume();
-
+    public void startUpdate(){
         mView.updateList(new ArrayList<Cardapio>(mAppPreferences.loadCardapio()));
         updateCardapio();
     }
@@ -56,7 +53,7 @@ public class MainPresenter extends BasePresenter {
         this.mLastSelectedWeekday = mLastSelectedWeekday;
     }
 
-    private void displayTodayTab() {
+    public void displayTodayTab() {
         Calendar today = Calendar.getInstance();
         int todayWeekday = today.get(Calendar.DAY_OF_WEEK);
 
@@ -101,19 +98,23 @@ public class MainPresenter extends BasePresenter {
 
         @Override
         public void onPostExecute(@Nullable Object result) {
-            saveCardapio((List<Cardapio>) result);
-            mView.updateList((ArrayList<Cardapio>) result);
-            mView.setRefreshing(false);
+            List<Cardapio> list = (List<Cardapio>) result;
 
-            if(firstTimeLoad) {
-                displayTodayTab();
-            } else {
-                displayTabByWeekend(mLastSelectedWeekday);
+            if(list != null && !list.isEmpty()) {
+                saveCardapio(list);
+                mView.updateList((ArrayList<Cardapio>) list);
+                mView.setRefreshing(false);
+
+                if (firstTimeLoad) {
+                    displayTodayTab();
+                } else {
+                    displayTabByWeekend(mLastSelectedWeekday);
+                }
+
+                firstTimeLoad = false;
+
+                mView.notifyUpdatedList();
             }
-
-            firstTimeLoad = false;
-
-            mView.notifyUpdatedList();
         }
     }
 

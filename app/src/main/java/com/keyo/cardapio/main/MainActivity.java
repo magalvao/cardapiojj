@@ -83,6 +83,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
 
         swipeRefreshLayoutyout.setOnRefreshListener(new CardapioRefresh());
         swipeRefreshLayoutyout.setEnabled(false);
+
+        mPresenter.startUpdate();
     }
 
     @Override
@@ -94,7 +96,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
     }
 
     @Override
-    public void updateList(@NonNull final ArrayList<Cardapio> list) {
+    public void updateList(@NonNull final List<Cardapio> list) {
 
         if (list.isEmpty()) {
             mEmptyView.setVisibility(View.VISIBLE);
@@ -140,20 +142,22 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
             mPresenter.setViewPager(viewPager);
         }
 
+        setRefreshing(false);
+
     }
 
     @Override
     public void setRefreshing(boolean state) {
-        //swipeRefreshLayoutyout.setRefreshing(state);
-
-        if(state) {
+       if(state) {
             mDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
             mDialog.getProgressHelper().setBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
             mDialog.setTitleText("Aguarde...");
             mDialog.setCancelable(false);
             mDialog.show();
         } else {
-            mDialog.dismissWithAnimation();
+            if(mDialog != null) {
+                mDialog.dismiss();
+            }
         }
     }
 
@@ -173,10 +177,27 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
 
     @Override
     public void notifyError() {
-        mDialog = new SweetAlertDialog(this, SweetAlertDialog.ERROR_TYPE);
-        mDialog.setTitleText("Ops...");
-        mDialog.setContentText("Erro ao atualizar cardápio!\nVerifique sua conexão com a Internet.");
-        mDialog.show();
+        MainActivity.this.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                if (mDialog != null) {
+                    mDialog.dismiss();
+                }
+
+                mDialog = new SweetAlertDialog(MainActivity.this, SweetAlertDialog.ERROR_TYPE);
+                mDialog.setTitleText("Ops...");
+                mDialog.setContentText("Erro ao atualizar cardápio!\nVerifique sua conexão com a Internet.");
+                mDialog.setConfirmClickListener(
+                        new SweetAlertDialog.OnSweetClickListener() {
+                    @Override
+                    public void onClick(final SweetAlertDialog sweetAlertDialog) {
+                        setRefreshing(false);
+                        mPresenter.displayTodayTab();
+                    }
+                });
+                mDialog.show();
+            }
+        });
     }
 
     private Map<Date, List<Cardapio>> orderListByDate(HashMap<Date, List<Cardapio>> hash) {

@@ -31,20 +31,16 @@ public class DayFragment extends Fragment {
     public static final String EXTRA_CARDAPIO = "EXTRA_CARDAPIO";
     private Date         mDate;
     private RecyclerView mealsList;
-    private View         btnLunchOut;
     private MealsListAdapter adapter;
     private LinearLayoutManager mLinearLayoutManager;
     private ArrayList<Cardapio> mMeals;
 
-    public DayFragment(Date mDate) {
-        this.mDate = mDate;
-    }
-
-    public static DayFragment newInstance(Date date, @NonNull final ArrayList<Cardapio> meals) {
-        DayFragment fragment = new DayFragment(date);
+    public static DayFragment newInstance(Date date, @NonNull final List<Cardapio> meals) {
+        DayFragment fragment = new DayFragment();
+        fragment.setDate(date);
         Bundle bundle = new Bundle(2);
         bundle.putLong(EXTRA_DATE, date.getTime());
-        bundle.putSerializable(EXTRA_CARDAPIO, meals);
+        bundle.putSerializable(EXTRA_CARDAPIO, (ArrayList<Cardapio>)meals);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -67,7 +63,6 @@ public class DayFragment extends Fragment {
         View view = inflater.inflate(R.layout.day_tab, container, false);
 
         mealsList = (RecyclerView) view.findViewById(R.id.mealsList);
-        btnLunchOut = view.findViewById(R.id.btnLunchOut);
 
         mLinearLayoutManager = new LinearLayoutManager(getActivity());
         mLinearLayoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -103,5 +98,9 @@ public class DayFragment extends Fragment {
         Calendar calendar = Calendar.getInstance();
         calendar.setTime(mDate);
         return calendar.get(Calendar.DAY_OF_WEEK);
+    }
+
+    public void setDate(Date date) {
+        this.mDate = date;
     }
 }
