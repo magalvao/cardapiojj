@@ -11,22 +11,35 @@
                   android:layout_marginBottom="@dimen/spacing_small"
                   android:layout_marginStart="@dimen/spacing_normal"
                   >
-    <LinearLayout android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:layout_weight="0.77"
-                  android:orientation="vertical">
-        <TextView android:id="@+id/meal_title" android:layout_width="match_parent"
-                  android:ellipsize="end"
-                  android:textColor="@color/text"
-                  android:paddingTop="@dimen/spacing_small"
-                  android:layout_marginBottom="@dimen/spacing_xsmall"
-                  android:layout_height="wrap_content" android:text="Title" android:textSize="@dimen/font_normal"
-                  />
-        <TextView android:id="@+id/meal_description" android:layout_width="wrap_content"
-                  android:layout_height="wrap_content"
-                  android:textColor="@color/text_subtitle"
-                  android:text="Description" android:textSize="@dimen/font_small"/>
-    </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.77"
+            android:orientation="vertical">
+
+            <TextView
+                android:id="@+id/meal_title"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginBottom="@dimen/spacing_xsmall"
+                android:ellipsize="end"
+                android:paddingTop="@dimen/spacing_small"
+                android:text="Title"
+                android:textColor="@color/text"
+                android:textSize="@dimen/font_normal" />
+
+            <TextView
+                android:id="@+id/meal_description"
+                android:layout_width="77dp"
+                android:layout_height="17dp"
+                android:background="@color/material_deep_teal_20"
+                android:paddingTop="2dp"
+                android:text="Description"
+                android:textAlignment="center"
+                android:textColor="@color/app_background"
+                android:textSize="@dimen/font_small" />
+        </LinearLayout>
 
 
     <LinearLayout android:layout_width="wrap_content"
