@@ -16,14 +16,15 @@
                android:layout_marginEnd="@dimen/spacing_xxxlarge"
     />
 
-    <TextView android:layout_width="wrap_content" android:layout_height="wrap_content"
-              android:text="Aplicativo desenvolvido com intuito de auxiliar na consulta do cardápio aos funcionários, tendo em vista não ter nenhuma relação com qualquer empresa."
-              android:textColor="@color/white"
-              android:textSize="@dimen/font_larger"
-              android:layout_marginStart="@dimen/spacing_xlarge"
-              android:layout_marginEnd="@dimen/spacing_xlarge"
-              android:gravity="center"
-    />
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_marginEnd="@dimen/spacing_xlarge"
+            android:layout_marginStart="@dimen/spacing_xlarge"
+            android:gravity="center"
+            android:text="Aplicativo desenvolvido com intuito de auxiliar na consulta do cardápio aos funcionários, tendo em vista não ter nenhuma relação com qualquer empresa."
+            android:textColor="@color/white"
+            android:textSize="18sp" />
 
     <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
               android:text="Achou algum erro?"
