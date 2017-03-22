@@ -1,0 +1,42 @@
+{
+  "project_info": {
+    "project_number": "162122920141",
+    "firebase_url": "https://cardapio-jj-android.firebaseio.com",
+    "project_id": "cardapio-jj-android",
+    "storage_bucket": "cardapio-jj-android.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:162122920141:android:6fd7cecb25f442c4",
+        "android_client_info": {
+          "package_name": "com.keyo.cardapio"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "162122920141-rrgldca43isqmuo8gn5fs173t28bnd9g.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyDb2fQzoYdtXbrBc5C1Aid1j1f__ZWdhvU"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

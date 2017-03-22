@@ -6,6 +6,7 @@ import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.app.AppCompatActivity;
+import com.onesignal.OneSignal;
 
 import uk.co.chrisjenx.calligraphy.CalligraphyContextWrapper;
 
@@ -28,6 +29,7 @@ public abstract class BaseActivity<Presenter extends BasePresenter> extends AppC
         super.onCreate(savedInstanceState);
         mPresenter = createPresenter(this);
         mPresenter.onCreate(savedInstanceState);
+        OneSignal.startInit(this).init();
     }
 
     @Override
