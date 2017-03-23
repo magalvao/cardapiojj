@@ -22,7 +22,7 @@ android {
         def SERVER_BASE_URL = "\"http://just4host.esy.es/\""
         buildConfigField "String", "SERVER_BASE_URL", SERVER_BASE_URL
 
-        manifestPlaceholders = [onesignal_app_id: "914c2b73-aff9-4cb5-8aa8-ed689da278c5",
+        manifestPlaceholders = [onesignal_app_id: "00000000",
                                 // Project number pulled from dashboard, local value is ignored.
                                 onesignal_google_project_number: "REMOTE"]
     }
