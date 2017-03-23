@@ -25,6 +25,7 @@ public class AppPreferences {
     public static final int DEFAULT_HOUR = 12;
     public static final int DEFAULT_MINUTE = 0;
     public static final String MINUTE = "MINUTE";
+    public static final String NOTIFICATIONS_ALLOWED = "NOTIFICATIONS_ALLOWED";
     private final SharedPreferences mSharedPreferences;
 
     public AppPreferences(@NonNull final Context context) {
@@ -59,5 +60,9 @@ public class AppPreferences {
 
     public int getMinuteToNitify() {
         return mSharedPreferences.getInt(MINUTE, DEFAULT_MINUTE);
+    }
+
+    public boolean isNotificationAllowed() {
+        return mSharedPreferences.getBoolean(NOTIFICATIONS_ALLOWED, false);
     }
 }
