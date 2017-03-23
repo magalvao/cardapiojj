@@ -22,24 +22,26 @@ import retrofit2.converter.gson.GsonConverterFactory;
  */
 
 public class CardapioDAO {
-    private final CardapioService mService;
 
+    private final CardapioService mService;
+    private final AppPreferences mAppPreferences;
     private CardapioErrorListener mErrorListener;
 
-    public CardapioDAO(@NonNull final String baseUrl) {
+    public CardapioDAO(@NonNull final String baseUrl, @NonNull final AppPreferences appPreferences) {
+        mAppPreferences = appPreferences;
 
         HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
         interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        OkHttpClient client = new OkHttpClient.Builder()
-                .addInterceptor(interceptor)
+        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor)
                 .readTimeout(5, TimeUnit.SECONDS)
                 .connectTimeout(5, TimeUnit.SECONDS)
                 .writeTimeout(5, TimeUnit.SECONDS)
                 .build();
         Retrofit retrofit = new Retrofit.Builder().baseUrl(baseUrl)
                 .client(client)
-                .addConverterFactory(GsonConverterFactory.create()).build();
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
         mService = retrofit.create(CardapioService.class);
     }
 
@@ -52,7 +54,7 @@ public class CardapioDAO {
         } catch (IOException e) {
             Log.e("CardapioList", "IO Error fetching documents.", e);
 
-            if(mErrorListener != null) {
+            if (mErrorListener != null) {
                 mErrorListener.onFetchError();
             }
         }
@@ -63,7 +65,12 @@ public class CardapioDAO {
         this.mErrorListener = mErrorListener;
     }
 
+    public void saveCardapios(final List<Cardapio> cardapios) {
+        mAppPreferences.saveCardapio(cardapios);
+    }
+
     public interface CardapioErrorListener {
+
         void onFetchError();
     }
 }
