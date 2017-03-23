@@ -20,12 +20,12 @@ import java.util.List;
 public class AppPreferences {
 
     public static final String LAST_LIST = "LAST_LIST";
-    private static final String PREF_NAME = "JJ_CARDAPIO";
     public static final String HOUR = "HOUR";
     public static final int DEFAULT_HOUR = 12;
     public static final int DEFAULT_MINUTE = 0;
     public static final String MINUTE = "MINUTE";
     public static final String NOTIFICATIONS_ALLOWED = "NOTIFICATIONS_ALLOWED";
+    private static final String PREF_NAME = "JJ_CARDAPIO";
     private final SharedPreferences mSharedPreferences;
 
     public AppPreferences(@NonNull final Context context) {
@@ -64,5 +64,18 @@ public class AppPreferences {
 
     public boolean isNotificationAllowed() {
         return mSharedPreferences.getBoolean(NOTIFICATIONS_ALLOWED, false);
+    }
+
+    public void saveHourAndMinute(final int hour, final int minute) {
+        SharedPreferences.Editor edit = mSharedPreferences.edit();
+        edit.putInt(HOUR, hour);
+        edit.putInt(MINUTE, minute);
+        edit.apply();
+    }
+
+    public void isChecked(final boolean isChecked) {
+        SharedPreferences.Editor edit = mSharedPreferences.edit();
+        edit.putBoolean(NOTIFICATIONS_ALLOWED, isChecked);
+        edit.apply();
     }
 }

@@ -25,6 +25,13 @@
         <activity android:name=".help.view.HelpActivity"
           android:screenOrientation="portrait"
         />
+        
+        <activity android:name=".main.ActivityAlarm"
+                  android:screenOrientation="portrait"/>
+
+        <receiver android:name=".service.AlarmReceiver"/>
+
+
     </application>
 
 </manifest>

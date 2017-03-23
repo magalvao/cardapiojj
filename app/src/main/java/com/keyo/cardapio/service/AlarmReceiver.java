@@ -64,7 +64,8 @@ public class AlarmReceiver extends BroadcastReceiver {
          * These calls are ignored by the support library for
          * pre-4.1 devices.
          */
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(description));
+                        .setStyle(new NotificationCompat.BigTextStyle().bigText(
+                                description + "\n" + description + "\n" + description + "\n" + description));
         return builder.build();
     }
 
@@ -81,10 +82,6 @@ public class AlarmReceiver extends BroadcastReceiver {
         return null;
     }
 
-    //    private PendingIntent openAppIntent(final Context context) {
-    //        Intent resultIntent = SplashScreenActivity.createIntent(context, false, false, 0, false);
-    //        return PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-    //    }
 
     private void showError() {
         throw new IllegalArgumentException("Notification Type can not be null");

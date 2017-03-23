@@ -1,5 +1,6 @@
 package com.keyo.cardapio.main;
 
+import android.app.AlarmManager;
 import android.content.Context;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
@@ -20,6 +21,8 @@ import com.keyo.cardapio.base.Screens;
 import com.keyo.cardapio.dao.AppPreferences;
 import com.keyo.cardapio.dao.CardapioDAO;
 import com.keyo.cardapio.help.view.HelpActivity;
+import com.keyo.cardapio.main.bo.CardapioBO;
+import com.keyo.cardapio.main.dao.NotificationDAO;
 import com.keyo.cardapio.main.presenter.MainPresenter;
 import com.keyo.cardapio.main.view.MainView;
 import com.keyo.cardapio.model.Cardapio;
@@ -42,11 +45,11 @@ import cn.pedant.SweetAlert.SweetAlertDialog;
 
 public class MainActivity extends BaseActivity<MainPresenter> implements MainView {
 
-    private ViewPager          viewPager;
-    private TabLayout          tabLayout;
+    private ViewPager viewPager;
+    private TabLayout tabLayout;
     private SwipeRefreshLayout swipeRefreshLayoutyout;
-    private View               mEmptyView;
-    private SweetAlertDialog   mDialog;
+    private View mEmptyView;
+    private SweetAlertDialog mDialog;
 
     @NonNull
     @Override
@@ -57,11 +60,10 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
     @NonNull
     @Override
     protected MainPresenter createPresenter(@NonNull Context context) {
-        return new MainPresenter(new CardapioDAO(BuildConfig.SERVER_BASE_URL),
-                                 new AppTaskExecutor(MainActivity.this),
-                                 this,
-                                 new AppPreferences(this),
-                                 viewPager);
+        AppPreferences appPreferences = new AppPreferences(context);
+        return new MainPresenter(new CardapioBO(new CardapioDAO(BuildConfig.SERVER_BASE_URL, appPreferences),
+                new NotificationDAO(context, appPreferences, (AlarmManager) getSystemService(Context.ALARM_SERVICE))),
+                new AppTaskExecutor(MainActivity.this), this, new AppPreferences(this), viewPager);
     }
 
     @Override
@@ -74,7 +76,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
         tabLayout = (TabLayout) findViewById(R.id.tabs);
         tabLayout.setupWithViewPager(viewPager);
         mEmptyView = findViewById(R.id.emptyView);
-
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
         myToolbar.setTitle("Cardápio");
@@ -90,7 +91,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
     @Override
     public void onDestroy() {
         super.onDestroy();
-        if(mDialog != null) {
+        if (mDialog != null) {
             mDialog.dismiss();
         }
     }
@@ -124,8 +125,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
                 }
             }
 
-            TreeMap<Date, List<Cardapio>> map = (TreeMap<Date, List<Cardapio>>) orderListByDate
-                    (hash);
+            TreeMap<Date, List<Cardapio>> map = (TreeMap<Date, List<Cardapio>>) orderListByDate(hash);
 
             for (Map.Entry<Date, List<Cardapio>> entry : map.entrySet()) {
                 Date key = entry.getKey();
@@ -133,29 +133,26 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
 
                 String weekdayName = sdfWeek.format(key);
                 adapter.addFragment(DayFragment.newInstance(key, (ArrayList<Cardapio>) value),
-                                    weekdayName
-                                            + "\n" + sdfDay.format(key));
+                        weekdayName + "\n" + sdfDay.format(key));
             }
-
 
             viewPager.setAdapter(adapter);
             mPresenter.setViewPager(viewPager);
         }
 
         setRefreshing(false);
-
     }
 
     @Override
     public void setRefreshing(boolean state) {
-       if(state) {
+        if (state) {
             mDialog = new SweetAlertDialog(this, SweetAlertDialog.PROGRESS_TYPE);
             mDialog.getProgressHelper().setBarColor(ContextCompat.getColor(this, R.color.colorPrimary));
             mDialog.setTitleText("Aguarde...");
             mDialog.setCancelable(false);
             mDialog.show();
         } else {
-            if(mDialog != null) {
+            if (mDialog != null) {
                 mDialog.dismiss();
             }
         }
@@ -171,13 +168,13 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
 
     @Override
     public void notifyUpdatedList() {
-        Snackbar.make(findViewById(R.id.rootLayout), "Cardápio atualizado!", Snackbar
-                .LENGTH_SHORT).show();
+        Snackbar.make(findViewById(R.id.rootLayout), "Cardápio atualizado!", Snackbar.LENGTH_SHORT).show();
     }
 
     @Override
     public void notifyError() {
         MainActivity.this.runOnUiThread(new Runnable() {
+
             @Override
             public void run() {
                 if (mDialog != null) {
@@ -187,8 +184,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
                 mDialog = new SweetAlertDialog(MainActivity.this, SweetAlertDialog.ERROR_TYPE);
                 mDialog.setTitleText("Ops...");
                 mDialog.setContentText("Erro ao atualizar cardápio!\nVerifique sua conexão com a Internet.");
-                mDialog.setConfirmClickListener(
-                        new SweetAlertDialog.OnSweetClickListener() {
+                mDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+
                     @Override
                     public void onClick(final SweetAlertDialog sweetAlertDialog) {
                         setRefreshing(false);
@@ -226,7 +223,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
         }
 
         if (id == R.id.action_info) {
-            startActivity(HelpActivity.createIntent(this));
+            startActivity(ActivityAlarm.createIntent(this));
             return true;
         }
 
