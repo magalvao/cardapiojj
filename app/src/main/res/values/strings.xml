@@ -1,3 +1,4 @@
 <resources>
     <string name="app_name">Cardapio</string>
+    <string name="time_format">%1$02d : %2$02d</string>
 </resources>

@@ -19,12 +19,17 @@ import java.util.List;
 
 public class AppPreferences {
 
-    private static final String PREF_NAME = "JJ_CARDAPIO";
     public static final String LAST_LIST = "LAST_LIST";
+    public static final String HOUR = "HOUR";
+    public static final int DEFAULT_HOUR = 12;
+    public static final int DEFAULT_MINUTE = 0;
+    public static final String MINUTE = "MINUTE";
+    public static final String NOTIFICATIONS_ALLOWED = "NOTIFICATIONS_ALLOWED";
+    private static final String PREF_NAME = "JJ_CARDAPIO";
     private final SharedPreferences mSharedPreferences;
 
     public AppPreferences(@NonNull final Context context) {
-            mSharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
+        mSharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
     public void saveCardapio(List<Cardapio> list) {
@@ -40,12 +45,37 @@ public class AppPreferences {
     public List<Cardapio> loadCardapio() {
         String json = mSharedPreferences.getString(LAST_LIST, null);
 
-        if(json == null || json.equals("null")) {
-            return new ArrayList<Cardapio>();
+        if (json == null || json.equals("null")) {
+            return new ArrayList<>();
         }
 
         Gson gson = new Gson();
-        Type listType = new TypeToken<ArrayList<Cardapio>>(){}.getType();
+        Type listType = new TypeToken<ArrayList<Cardapio>>() {}.getType();
         return gson.fromJson(json, listType);
+    }
+
+    public int getHourToNotify() {
+        return mSharedPreferences.getInt(HOUR, DEFAULT_HOUR);
+    }
+
+    public int getMinuteToNitify() {
+        return mSharedPreferences.getInt(MINUTE, DEFAULT_MINUTE);
+    }
+
+    public boolean isNotificationAllowed() {
+        return mSharedPreferences.getBoolean(NOTIFICATIONS_ALLOWED, false);
+    }
+
+    public void saveHourAndMinute(final int hour, final int minute) {
+        SharedPreferences.Editor edit = mSharedPreferences.edit();
+        edit.putInt(HOUR, hour);
+        edit.putInt(MINUTE, minute);
+        edit.apply();
+    }
+
+    public void isChecked(final boolean isChecked) {
+        SharedPreferences.Editor edit = mSharedPreferences.edit();
+        edit.putBoolean(NOTIFICATIONS_ALLOWED, isChecked);
+        edit.apply();
     }
 }

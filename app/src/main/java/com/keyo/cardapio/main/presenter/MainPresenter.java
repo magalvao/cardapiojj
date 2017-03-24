@@ -5,11 +5,12 @@ import android.support.v4.view.ViewPager;
 
 import com.keyo.cardapio.base.BasePresenter;
 import com.keyo.cardapio.dao.AppPreferences;
-import com.keyo.cardapio.dao.CardapioDAO;
 import com.keyo.cardapio.main.DayFragment;
 import com.keyo.cardapio.main.ViewPagerAdapter;
+import com.keyo.cardapio.main.bo.CardapioBO;
 import com.keyo.cardapio.main.view.MainView;
 import com.keyo.cardapio.model.Cardapio;
+import com.keyo.cardapio.task.AppTask;
 import com.keyo.cardapio.task.TaskExecutor;
 
 import java.util.ArrayList;
@@ -21,7 +22,7 @@ import java.util.List;
  */
 public class MainPresenter extends BasePresenter {
 
-    private final CardapioDAO  mCardapioDAO;
+    private final CardapioBO mCardapioBO;
     private final TaskExecutor mTaskExecutor;
     private final MainView mView;
     private final AppPreferences mAppPreferences;
@@ -29,19 +30,17 @@ public class MainPresenter extends BasePresenter {
     private boolean firstTimeLoad = true;
     private int mLastSelectedWeekday = Calendar.MONDAY;
 
-    public MainPresenter(CardapioDAO cardapioDAO, TaskExecutor taskExecutor, MainView
-            view, AppPreferences appPreferences, ViewPager viewPager) {
-        mCardapioDAO = cardapioDAO;
+    public MainPresenter(CardapioBO cardapioBO, TaskExecutor taskExecutor, MainView view, AppPreferences appPreferences,
+                         ViewPager viewPager) {
+        mCardapioBO = cardapioBO;
         mTaskExecutor = taskExecutor;
         mView = view;
         mAppPreferences = appPreferences;
         mViewPager = viewPager;
-
-        mCardapioDAO.setErrorListener(new CardapioError());
     }
 
-    public void startUpdate(){
-        mView.updateList(new ArrayList<Cardapio>(mAppPreferences.loadCardapio()));
+    public void startUpdate() {
+        mView.updateList(new ArrayList<>(mAppPreferences.loadCardapio()));
         updateCardapio();
     }
 
@@ -61,7 +60,7 @@ public class MainPresenter extends BasePresenter {
     }
 
     private void displayTabByWeekend(int weekday) {
-        if(mViewPager != null) {
+        if (mViewPager != null) {
             ViewPagerAdapter adapter = (ViewPagerAdapter) mViewPager.getAdapter();
             for (int i = 0; i < adapter.getCount(); i++) {
                 DayFragment dayFragment = (DayFragment) adapter.getItem(i);
@@ -75,7 +74,7 @@ public class MainPresenter extends BasePresenter {
     }
 
     public void updateCardapio() {
-        if(mViewPager != null) {
+        if (mViewPager != null) {
             ViewPagerAdapter adapter = (ViewPagerAdapter) mViewPager.getAdapter();
             DayFragment day = (DayFragment) adapter.getItem(mViewPager.getCurrentItem());
             mLastSelectedWeekday = day.getWeekDay();
@@ -85,24 +84,18 @@ public class MainPresenter extends BasePresenter {
         mTaskExecutor.async(new UpdateCardapioTask());
     }
 
-    public void saveCardapio(List<Cardapio> list) {
-        mAppPreferences.saveCardapio(list);
-    }
 
-    private class UpdateCardapioTask implements com.keyo.cardapio.task.AppTask<Object> {
+    private class UpdateCardapioTask implements AppTask<List<Cardapio>> {
 
         @Override
-        public Object execute() {
-            return mCardapioDAO.fetchCardapio();
+        public List<Cardapio> execute() {
+            return mCardapioBO.fetchCardapio();
         }
 
         @Override
-        public void onPostExecute(@Nullable Object result) {
-            List<Cardapio> list = (List<Cardapio>) result;
-
-            if(list != null && !list.isEmpty()) {
-                saveCardapio(list);
-                mView.updateList((ArrayList<Cardapio>) list);
+        public void onPostExecute(@Nullable final List<Cardapio> result) {
+            if (result != null && !result.isEmpty()) {
+                mView.updateList(result);
                 mView.setRefreshing(false);
 
                 if (firstTimeLoad) {
@@ -115,14 +108,6 @@ public class MainPresenter extends BasePresenter {
 
                 mView.notifyUpdatedList();
             }
-        }
-    }
-
-    private class CardapioError implements CardapioDAO.CardapioErrorListener {
-
-        @Override
-        public void onFetchError() {
-            mView.notifyError();
         }
     }
 }

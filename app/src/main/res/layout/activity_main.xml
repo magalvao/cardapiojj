@@ -1,12 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
-<android.support.constraint.ConstraintLayout
-    xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:tools="http://schemas.android.com/tools"
-    android:animateLayoutChanges="true"
-    android:id="@+id/rootLayout"
-    android:layout_width="match_parent" android:layout_height="match_parent"
-    android:background="@color/app_background">
+<android.support.constraint.ConstraintLayout android:id="@+id/rootLayout"
+                                             xmlns:android="http://schemas.android.com/apk/res/android"
+                                             xmlns:app="http://schemas.android.com/apk/res-auto"
+                                             xmlns:tools="http://schemas.android.com/tools"
+                                             android:layout_width="match_parent"
+                                             android:layout_height="match_parent"
+                                             android:animateLayoutChanges="true"
+                                             android:background="@color/app_background">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
@@ -14,7 +14,8 @@
         android:layout_height="56dp"
         android:background="?attr/colorPrimary"
         android:theme="@style/ThemeOverlay.AppCompat.ActionBar"
-        app:layout_constraintLeft_toLeftOf="parent" app:layout_constraintRight_toRightOf="parent"
+        app:layout_constraintLeft_toLeftOf="parent"
+        app:layout_constraintRight_toRightOf="parent"
         app:popupTheme="@style/ThemeOverlay.AppCompat.Light"
         tools:layout_editor_absoluteY="0dp"/>
 
@@ -34,49 +35,57 @@
         app:tabTextColor="@color/lightwhite"
         tools:layout_constraintLeft_creator="1"
         tools:layout_constraintRight_creator="1"/>
-    <android.support.v4.widget.SwipeRefreshLayout
-        android:id="@+id/swiperefresh"
-        xmlns:android="http://schemas.android.com/apk/res/android"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
-        android:layout_marginBottom="0dp"
-        android:layout_marginLeft="0dp"
-        android:layout_marginRight="0dp"
-        android:layout_marginTop="0dp"
-        android:layout_weight="1" android:animateLayoutChanges="true"
-        app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintLeft_toLeftOf="parent"
-        app:layout_constraintRight_toRightOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/tabs">
 
+    <android.support.v4.widget.SwipeRefreshLayout android:id="@+id/swiperefresh"
+                                                  xmlns:android="http://schemas.android.com/apk/res/android"
+                                                  android:layout_width="0dp"
+                                                  android:layout_height="0dp"
+                                                  android:layout_marginBottom="0dp"
+                                                  android:layout_marginLeft="0dp"
+                                                  android:layout_marginRight="0dp"
+                                                  android:layout_marginTop="0dp"
+                                                  android:layout_weight="1"
+                                                  android:animateLayoutChanges="true"
+                                                  app:layout_constraintBottom_toBottomOf="parent"
+                                                  app:layout_constraintLeft_toLeftOf="parent"
+                                                  app:layout_constraintRight_toRightOf="parent"
+                                                  app:layout_constraintTop_toBottomOf="@+id/tabs">
 
-        <FrameLayout android:layout_width="0dp" android:layout_height="0dp"
-                     android:layout_marginTop="0dp"
-                     app:layout_constraintBottom_toBottomOf="parent"
-                     app:layout_constraintLeft_toLeftOf="parent"
-                     app:layout_constraintRight_toRightOf="parent"
-                     app:layout_constraintTop_toBottomOf="@+id/tabs">
+        <FrameLayout
+            android:layout_width="0dp"
+            android:layout_height="0dp"
+            android:layout_marginTop="0dp"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintLeft_toLeftOf="parent"
+            app:layout_constraintRight_toRightOf="parent"
+            app:layout_constraintTop_toBottomOf="@+id/tabs">
 
-            <LinearLayout android:id="@+id/emptyView"
-                          android:layout_width="match_parent"
-                          android:layout_height="match_parent"
-                          android:layout_marginBottom="0dp"
-                          android:layout_marginTop="@dimen/spacing_xxlarge"
-                          android:orientation="vertical"
-                          app:layout_constraintBottom_toBottomOf="@+id/swiperefresh"
-                          app:layout_constraintHorizontal_bias="0.0"
-                          app:layout_constraintLeft_toLeftOf="parent"
-                          app:layout_constraintRight_toRightOf="parent"
-                          app:layout_constraintTop_toBottomOf="@+id/tabs"
-                          app:layout_constraintVertical_bias="0.0">
-                <ImageView android:layout_width="70dp" android:layout_height="70dp"
-                           android:layout_gravity="center"
-                           android:src="@drawable/cat_hungry"
-                />
-                <TextView android:layout_width="match_parent" android:layout_height="wrap_content"
-                          android:layout_marginTop="@dimen/spacing_normal"
-                          android:gravity="center"
-                          android:text="Cardápio vazio\n\nAtualize para tentar novamente..."
-                />
+            <LinearLayout
+                android:id="@+id/emptyView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="0dp"
+                android:layout_marginTop="@dimen/spacing_xxlarge"
+                android:orientation="vertical"
+                app:layout_constraintBottom_toBottomOf="@+id/swiperefresh"
+                app:layout_constraintHorizontal_bias="0.0"
+                app:layout_constraintLeft_toLeftOf="parent"
+                app:layout_constraintRight_toRightOf="parent"
+                app:layout_constraintTop_toBottomOf="@+id/tabs"
+                app:layout_constraintVertical_bias="0.0">
+
+                <ImageView
+                    android:layout_width="70dp"
+                    android:layout_height="70dp"
+                    android:layout_gravity="center"
+                    android:src="@drawable/cat_hungry"/>
+
+                <TextView
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_marginTop="@dimen/spacing_normal"
+                    android:gravity="center"
+                    android:text="Cardápio vazio\n\nAtualize para tentar novamente..."/>
             </LinearLayout>
 
             <android.support.v4.view.ViewPager
@@ -93,7 +102,5 @@
         </FrameLayout>
 
     </android.support.v4.widget.SwipeRefreshLayout>
-
-
 
 </android.support.constraint.ConstraintLayout>
