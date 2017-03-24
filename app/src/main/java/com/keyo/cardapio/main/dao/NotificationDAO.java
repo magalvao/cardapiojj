@@ -47,6 +47,7 @@ public class NotificationDAO {
         final PendingIntent alarmIntent =
                 PendingIntent.getBroadcast(mContext, CARDAPIO_ALARM_ID, notificationIntent, FLAG_UPDATE_CURRENT);
 
+
         mAlarmManager.setRepeating(AlarmManager.RTC_WAKEUP, calendarNotification.getTimeInMillis(),
                 DAYS_TO_MILLISECONDS, alarmIntent);
     }

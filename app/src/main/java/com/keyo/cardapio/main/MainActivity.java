@@ -222,8 +222,13 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
             return true;
         }
 
-        if (id == R.id.action_info) {
+        if (id == R.id.action_alarm) {
             startActivity(ActivityAlarm.createIntent(this));
+            return true;
+        }
+
+        if (id == R.id.action_info) {
+            startActivity(HelpActivity.createIntent(this));
             return true;
         }
 

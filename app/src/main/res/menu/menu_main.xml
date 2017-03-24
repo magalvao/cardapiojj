@@ -6,16 +6,21 @@
     tools:context=".MainActivity">
     <item
         android:id="@+id/action_info"
-        android:orderInCategory="200"
+        android:orderInCategory="300"
         android:title="Info"
         android:icon="@drawable/info_icon"
-        
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
+    <item
+        android:id="@+id/action_alarm"
+        android:orderInCategory="200"
+        android:title="Alarme"
+        android:icon="@drawable/clock_icon"
+        app:showAsAction="always" />
     <item
         android:id="@+id/action_refresh"
         android:orderInCategory="100"
         android:title="Info"
         android:icon="@drawable/refresh_icon"
-        app:showAsAction="ifRoom" />
+        app:showAsAction="always" />
 
 </menu>
