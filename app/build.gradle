@@ -19,6 +19,7 @@ android {
         versionName "1.0.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
+
         //Remember to create your own "gradle.properties" file from the template
         buildConfigField "String", "SERVER_BASE_URL", serverBaseUrl
         manifestPlaceholders = [onesignal_app_id: oneSignalAppId,
