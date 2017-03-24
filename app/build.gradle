@@ -19,10 +19,9 @@ android {
         versionName "1.0.2"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
 
-        def SERVER_BASE_URL = "\"http://just4host.esy.es/\""
-        buildConfigField "String", "SERVER_BASE_URL", SERVER_BASE_URL
+        buildConfigField "String", "SERVER_BASE_URL", serverBaseUrl
 
-        manifestPlaceholders = [onesignal_app_id: "00000000",
+        manifestPlaceholders = [onesignal_app_id: oneSignalAppId,
                                 // Project number pulled from dashboard, local value is ignored.
                                 onesignal_google_project_number: "REMOTE"]
     }
