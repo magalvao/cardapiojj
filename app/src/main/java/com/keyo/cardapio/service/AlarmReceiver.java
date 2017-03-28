@@ -3,6 +3,7 @@ package com.keyo.cardapio.service;
 import android.app.AlarmManager;
 import android.app.Notification;
 import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -12,6 +13,7 @@ import android.text.Html;
 
 import com.keyo.cardapio.R;
 import com.keyo.cardapio.dao.AppPreferences;
+import com.keyo.cardapio.main.MainActivity;
 import com.keyo.cardapio.main.dao.NotificationDAO;
 import com.keyo.cardapio.model.Cardapio;
 
@@ -59,8 +61,11 @@ public class AlarmReceiver extends BroadcastReceiver {
 
         StringBuilder description = new StringBuilder();
         for (Cardapio meal : todayMeals) {
-            description.append("<b>").append(meal.getOptionName()).append(":</b> ")
-                    .append(meal.getDescription()).append("<br />");
+            description.append("<b>")
+                    .append(meal.getOptionName())
+                    .append(":</b> ")
+                    .append(meal.getDescription())
+                    .append("<br />");
         }
 
         return description.toString();
@@ -80,7 +85,11 @@ public class AlarmReceiver extends BroadcastReceiver {
          * These calls are ignored by the support library for
          * pre-4.1 devices.
          */
-                        .setStyle(new NotificationCompat.BigTextStyle().bigText(Html.fromHtml(notificationDescription)));
+                        .setStyle(
+                                new NotificationCompat.BigTextStyle().bigText(Html.fromHtml(notificationDescription)));
+        PendingIntent resultPendingIntent = openAppIntent(context);
+        builder.setContentIntent(resultPendingIntent);
+        builder.setAutoCancel(true);
         return builder.build();
     }
 
@@ -100,6 +109,10 @@ public class AlarmReceiver extends BroadcastReceiver {
         return list;
     }
 
+    private PendingIntent openAppIntent(final Context context) {
+        Intent resultIntent = new Intent(context, MainActivity.class);
+        return PendingIntent.getActivity(context, 0, resultIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+    }
 
     private void showError() {
         throw new IllegalArgumentException("Notification Type can not be null");
