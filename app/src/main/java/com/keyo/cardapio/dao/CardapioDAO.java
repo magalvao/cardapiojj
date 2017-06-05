@@ -13,7 +13,6 @@ import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
-import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
 import retrofit2.converter.gson.GsonConverterFactory;
 
@@ -30,10 +29,10 @@ public class CardapioDAO {
     public CardapioDAO(@NonNull final String baseUrl, @NonNull final AppPreferences appPreferences) {
         mAppPreferences = appPreferences;
 
-        HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
+        //HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
+        //interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
 
-        OkHttpClient client = new OkHttpClient.Builder().addInterceptor(interceptor)
+        OkHttpClient client = new OkHttpClient.Builder()
                 .readTimeout(5, TimeUnit.SECONDS)
                 .connectTimeout(5, TimeUnit.SECONDS)
                 .writeTimeout(5, TimeUnit.SECONDS)
@@ -54,10 +53,9 @@ public class CardapioDAO {
         } catch (IOException e) {
             Log.e("CardapioList", "IO Error fetching documents.", e);
 
-            if (mErrorListener != null) {
-                mErrorListener.onFetchError();
-            }
+            return null;
         }
+
         return new ArrayList<>();
     }
 

@@ -1,4 +1,7 @@
 <resources>
     <string name="app_name">Cardapio</string>
     <string name="time_format">%1$02d:%2$02d</string>
+    <string name="drawer_open">Abrir</string>
+    <string name="drawer_close">Fechar</string>
+    <string name="menu_title">Cardápio</string>
 </resources>

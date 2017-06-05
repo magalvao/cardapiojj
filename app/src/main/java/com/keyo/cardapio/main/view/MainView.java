@@ -2,6 +2,7 @@ package com.keyo.cardapio.main.view;
 
 import com.keyo.cardapio.model.Cardapio;
 
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -18,4 +19,8 @@ public interface MainView {
     void notifyUpdatedList();
 
     void notifyError();
+
+    void showLastData();
+
+    void shareCardapio(String textToShare, Date currentDate);
 }

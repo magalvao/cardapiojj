@@ -11,6 +11,7 @@ import retrofit2.http.GET;
 
 public interface CardapioService {
 
+    //@GET("/api/json/get/4yi-ycGeX")
     @GET("/cardapio.json")
     Call<CardapioList> getCardapio();
 }

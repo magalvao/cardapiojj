@@ -423,4 +423,16 @@ public class CalendarDateUtils {
         calendar.add(Calendar.DAY_OF_YEAR, days);
         return calendar.getTime();
     }
+
+    public static Date getThisWeekMonday() {
+        final Calendar calendar = Calendar.getInstance(Locale.getDefault());
+        calendar.setTime(new Date());
+        calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
+        calendar.set(Calendar.HOUR_OF_DAY, 0);
+        calendar.set(Calendar.MINUTE, 0);
+        calendar.set(Calendar.SECOND, 0);
+        calendar.set(Calendar.MILLISECOND, 0);
+
+        return calendar.getTime();
+    }
 }

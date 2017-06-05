@@ -2,6 +2,7 @@ package com.keyo.cardapio.main;
 
 import android.app.AlarmManager;
 import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -26,6 +27,7 @@ import com.keyo.cardapio.main.dao.NotificationDAO;
 import com.keyo.cardapio.main.presenter.MainPresenter;
 import com.keyo.cardapio.main.view.MainView;
 import com.keyo.cardapio.model.Cardapio;
+import com.keyo.cardapio.service.CalendarDateUtils;
 import com.keyo.cardapio.task.AppTaskExecutor;
 
 import java.text.SimpleDateFormat;
@@ -50,6 +52,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
     private SwipeRefreshLayout swipeRefreshLayoutyout;
     private View mEmptyView;
     private SweetAlertDialog mDialog;
+    private boolean mForcedRefresh = false;
 
     @NonNull
     @Override
@@ -96,14 +99,27 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
         }
     }
 
+
     @Override
     public void updateList(@NonNull final List<Cardapio> list) {
 
-        if (list.isEmpty()) {
+        tabLayout.removeAllTabs();
+
+        if (list.isEmpty()
+                || (!list.isEmpty() && list.get(0).getDate().before(CalendarDateUtils.getThisWeekMonday()))) {
+            ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
+            adapter.addFragment(DayFragment.newInstance(null, new ArrayList<Cardapio>()), "");
+            viewPager.setVisibility(View.GONE);
+            viewPager.setAdapter(adapter);
+            mPresenter.setViewPager(viewPager);
             mEmptyView.setVisibility(View.VISIBLE);
+            tabLayout.setVisibility(View.GONE);
         } else {
 
             mEmptyView.setVisibility(View.GONE);
+            viewPager.setVisibility(View.VISIBLE);
+            tabLayout.setVisibility(View.VISIBLE);
+
 
             ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
 
@@ -126,7 +142,6 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
             }
 
             TreeMap<Date, List<Cardapio>> map = (TreeMap<Date, List<Cardapio>>) orderListByDate(hash);
-
             for (Map.Entry<Date, List<Cardapio>> entry : map.entrySet()) {
                 Date key = entry.getKey();
                 List<Cardapio> value = entry.getValue();
@@ -136,11 +151,16 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
                         weekdayName + "\n" + sdfDay.format(key));
             }
 
+
             viewPager.setAdapter(adapter);
             mPresenter.setViewPager(viewPager);
+            tabLayout.setupWithViewPager(viewPager);
+            adapter.notifyDataSetChanged();
         }
 
         setRefreshing(false);
+        tabLayout.invalidate();
+
     }
 
     @Override
@@ -168,38 +188,34 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
 
     @Override
     public void notifyUpdatedList() {
-        Snackbar.make(findViewById(R.id.rootLayout), "Cardápio atualizado!", Snackbar.LENGTH_SHORT).show();
+        Snackbar.make(findViewById(R.id.rootLayout), "Cardápio atualizado!", Snackbar.LENGTH_LONG).show();
     }
 
     @Override
     public void notifyError() {
-        MainActivity.this.runOnUiThread(new Runnable() {
+        Snackbar.make(findViewById(R.id.rootLayout),
+            "Não foi possível atualizar. Verifique sua conexão com a Internet.", Snackbar.LENGTH_LONG).show();
+    }
 
-            @Override
-            public void run() {
-                if (mDialog != null) {
-                    mDialog.dismiss();
-                }
+    @Override
+    public void showLastData() {
+        AppPreferences prefs = new AppPreferences(this);
+        updateList(new ArrayList<>(prefs.loadCardapio()));
+    }
 
-                mDialog = new SweetAlertDialog(MainActivity.this, SweetAlertDialog.ERROR_TYPE);
-                mDialog.setTitleText("Ops...");
-                mDialog.setContentText("Erro ao atualizar cardápio!\nVerifique sua conexão com a Internet.");
-                mDialog.setConfirmClickListener(new SweetAlertDialog.OnSweetClickListener() {
+    @Override
+    public void shareCardapio(final String textToShare, final Date currentDate) {
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE (dd/MMM)", Locale.getDefault());
 
-                    @Override
-                    public void onClick(final SweetAlertDialog sweetAlertDialog) {
-                        setRefreshing(false);
-                        mPresenter.displayTodayTab();
-                    }
-                });
-                mDialog.show();
-            }
-        });
+        Intent sharingIntent = new Intent(android.content.Intent.ACTION_SEND);
+        sharingIntent.setType("text/plain");
+        sharingIntent.putExtra(android.content.Intent.EXTRA_SUBJECT, "Cardápio de " + sdf.format(currentDate));
+        sharingIntent.putExtra(android.content.Intent.EXTRA_TEXT, textToShare);
+        startActivity(Intent.createChooser(sharingIntent, "Compartilhar onde?"));
     }
 
     private Map<Date, List<Cardapio>> orderListByDate(HashMap<Date, List<Cardapio>> hash) {
-        Map<Date, List<Cardapio>> map = new TreeMap<Date, List<Cardapio>>(hash);
-        return map;
+        return new TreeMap<Date, List<Cardapio>>(hash);
     }
 
     @Override
@@ -218,7 +234,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
 
         //noinspection SimplifiableIfStatement
         if (id == R.id.action_refresh) {
-            mPresenter.updateCardapio();
+            Intent intent = getIntent();
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+            finish();
+            startActivity(intent);
+            //mPresenter.updateCardapio();
             return true;
         }
 
@@ -229,6 +249,23 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
 
         if (id == R.id.action_info) {
             startActivity(HelpActivity.createIntent(this));
+            return true;
+        }
+
+        if(id == R.id.action_share) {
+            if(tabLayout.getTabCount() > 1) {
+                ViewPagerAdapter adapter = (ViewPagerAdapter) viewPager.getAdapter();
+                DayFragment tab = (DayFragment) adapter.getItem(tabLayout.getSelectedTabPosition());
+                Date currentDate = tab.getDate();
+
+                AppPreferences pref = new AppPreferences(this);
+
+                mPresenter.prepareToShare(currentDate, pref.loadCardapio());
+
+            } else {
+                Snackbar.make(findViewById(R.id.rootLayout),
+                              "Nenhum cardápio disponível!", Snackbar.LENGTH_LONG).show();
+            }
             return true;
         }
 

@@ -13,9 +13,12 @@ import com.keyo.cardapio.model.Cardapio;
 import com.keyo.cardapio.task.AppTask;
 import com.keyo.cardapio.task.TaskExecutor;
 
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.List;
+import java.util.Locale;
 
 /**
  * Created by mgalvao3 on 01/02/17.
@@ -40,7 +43,6 @@ public class MainPresenter extends BasePresenter {
     }
 
     public void startUpdate() {
-        mView.updateList(new ArrayList<>(mAppPreferences.loadCardapio()));
         updateCardapio();
     }
 
@@ -84,6 +86,24 @@ public class MainPresenter extends BasePresenter {
         mTaskExecutor.async(new UpdateCardapioTask());
     }
 
+    public void prepareToShare(final Date currentDate, final List<Cardapio> cardapios) {
+        ArrayList<Cardapio> list = new ArrayList<>();
+        StringBuilder textToShare = new StringBuilder();
+
+        SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd/MMM", Locale.getDefault());
+
+        textToShare.append("*Cardápio de ").append(sdf.format(currentDate)).append("*\n\n");
+
+        for (final Cardapio meal : cardapios) {
+            Date cardapioDate = meal.getDate();
+            if (cardapioDate.equals(currentDate)) {
+                textToShare.append("*").append(meal.getOptionName()).append("*: ")
+                        .append(meal.getDescription()).append("\n ");
+            }
+        }
+
+        mView.shareCardapio(textToShare.toString(), currentDate);
+    }
 
     private class UpdateCardapioTask implements AppTask<List<Cardapio>> {
 
@@ -94,9 +114,10 @@ public class MainPresenter extends BasePresenter {
 
         @Override
         public void onPostExecute(@Nullable final List<Cardapio> result) {
+            mView.setRefreshing(false);
+
             if (result != null && !result.isEmpty()) {
                 mView.updateList(result);
-                mView.setRefreshing(false);
 
                 if (firstTimeLoad) {
                     displayTodayTab();
@@ -107,6 +128,10 @@ public class MainPresenter extends BasePresenter {
                 firstTimeLoad = false;
 
                 mView.notifyUpdatedList();
+            } else {
+                mView.notifyError();
+                mView.showLastData();
+                displayTodayTab();
             }
         }
     }

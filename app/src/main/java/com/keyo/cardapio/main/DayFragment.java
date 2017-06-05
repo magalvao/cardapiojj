@@ -35,11 +35,13 @@ public class DayFragment extends Fragment {
     private LinearLayoutManager mLinearLayoutManager;
     private ArrayList<Cardapio> mMeals;
 
-    public static DayFragment newInstance(Date date, @NonNull final List<Cardapio> meals) {
+    public static DayFragment newInstance(@Nullable Date date, @NonNull final List<Cardapio> meals) {
         DayFragment fragment = new DayFragment();
         fragment.setDate(date);
         Bundle bundle = new Bundle(2);
-        bundle.putLong(EXTRA_DATE, date.getTime());
+        if(date != null) {
+            bundle.putLong(EXTRA_DATE, date.getTime());
+        }
         bundle.putSerializable(EXTRA_CARDAPIO, (ArrayList<Cardapio>)meals);
         fragment.setArguments(bundle);
         return fragment;
@@ -73,8 +75,12 @@ public class DayFragment extends Fragment {
         mealsList.setAdapter(adapter);
 
         TextView title = (TextView) view.findViewById(R.id.date_title);
-        SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd 'de' MMMM 'de' yyyy", new Locale("pt","BR"));
-        title.setText(capitalize(sdf.format(mDate)));
+        if(mDate != null && mDate.after(new Date(0L))) {
+            SimpleDateFormat sdf = new SimpleDateFormat("EEEE, dd 'de' MMMM 'de' yyyy", new Locale("pt", "BR"));
+            title.setText(capitalize(sdf.format(mDate)));
+        } else {
+            title.setVisibility(View.GONE);
+        }
         return view;
     }
 
@@ -96,11 +102,17 @@ public class DayFragment extends Fragment {
 
     public int getWeekDay() {
         Calendar calendar = Calendar.getInstance();
-        calendar.setTime(mDate);
+        if(mDate != null) {
+            calendar.setTime(mDate);
+        }
         return calendar.get(Calendar.DAY_OF_WEEK);
     }
 
     public void setDate(Date date) {
         this.mDate = date;
+    }
+
+    public Date getDate() {
+        return mDate;
     }
 }

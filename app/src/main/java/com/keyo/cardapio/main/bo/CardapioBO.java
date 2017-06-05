@@ -22,8 +22,8 @@ public class CardapioBO {
 
     public List<Cardapio> fetchCardapio() {
         List<Cardapio> cardapios = mCardapioDAO.fetchCardapio();
-        mCardapioDAO.saveCardapios(cardapios);
         if (cardapios != null) {
+            mCardapioDAO.saveCardapios(cardapios);
             mNotificationDAO.scheduleNotifications();
         }
         return cardapios;
