@@ -2,21 +2,8 @@
 <menu
     xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
-    xmlns:cardapio="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     tools:context=".MainActivity">
-    <item
-        android:id="@+id/action_info"
-        android:orderInCategory="400"
-        android:title="Quem Fez?"
-        android:icon="@drawable/info_icon"
-        app:showAsAction="ifRoom" />
-    <item
-        android:id="@+id/action_alarm"
-        android:orderInCategory="200"
-        android:title="Alarme"
-        android:icon="@drawable/clock_icon"
-        app:showAsAction="ifRoom" />
     <item
         android:id="@+id/action_refresh"
         android:orderInCategory="50"
@@ -29,10 +16,4 @@
         android:title="Compartilhar"
         android:icon="@drawable/icon_share"
         app:showAsAction="always" />
-    <item
-        android:id="@+id/action_lojinha"
-        android:orderInCategory="300"
-        android:title="Lojinha"
-        android:icon="@drawable/box"
-        cardapio:showAsAction="always" />
 </menu>

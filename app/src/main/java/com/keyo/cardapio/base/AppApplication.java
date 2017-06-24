@@ -4,6 +4,8 @@ import android.app.Application;
 
 import com.keyo.cardapio.R;
 
+import net.danlew.android.joda.JodaTimeAndroid;
+
 import uk.co.chrisjenx.calligraphy.CalligraphyConfig;
 
 /**
@@ -23,6 +25,8 @@ public class AppApplication extends Application {
                                               .setFontAttrId(R.attr.fontPath)
                                               .build()
         );
+
+        JodaTimeAndroid.init(this);
     }
 
     /**

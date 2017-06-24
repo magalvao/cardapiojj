@@ -105,6 +105,10 @@ public class MainPresenter extends BasePresenter {
         mView.shareCardapio(textToShare.toString(), currentDate);
     }
 
+    public void popupClosed() {
+        mAppPreferences.setPopupFeatureValue(AppPreferences.LAST_FEATURE_CODE);
+    }
+
     private class UpdateCardapioTask implements AppTask<List<Cardapio>> {
 
         @Override
@@ -128,11 +132,19 @@ public class MainPresenter extends BasePresenter {
                 firstTimeLoad = false;
 
                 mView.notifyUpdatedList();
+                if(isNewFeatureAvailable()) {
+                    mView.notifyNewFeature();
+                }
             } else {
                 mView.notifyError();
                 mView.showLastData();
                 displayTodayTab();
             }
         }
+    }
+
+    private boolean isNewFeatureAvailable() {
+        int featureCode = mAppPreferences.getPopupFeatureValue();
+        return (featureCode < AppPreferences.LAST_FEATURE_CODE);
     }
 }

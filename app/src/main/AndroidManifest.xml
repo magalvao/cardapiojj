@@ -41,6 +41,9 @@
 
         <receiver android:name=".service.AlarmReceiver"/>
 
+        <activity android:name=".lojinha.view.LojinhaActivity"
+                  android:screenOrientation="portrait"/>
+
 
     </application>
 

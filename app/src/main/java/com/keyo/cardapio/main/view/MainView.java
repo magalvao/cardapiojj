@@ -23,4 +23,6 @@ public interface MainView {
     void showLastData();
 
     void shareCardapio(String textToShare, Date currentDate);
+
+    void notifyNewFeature();
 }

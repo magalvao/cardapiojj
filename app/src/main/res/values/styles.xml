@@ -15,5 +15,8 @@
     <style name="MyActionBar" parent="@android:style/Widget.Holo.ActionBar">
         <item name="android:background">@color/colorPrimary</item>
     </style>
+    <style name="TextAppearance.SFBold" parent="android:TextAppearance">
+        <item name="fontPath">fonts/SF_Bold.otf</item>
+    </style>
 
 </resources>

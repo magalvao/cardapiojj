@@ -17,6 +17,8 @@
 
     <color name="app_background">#ffffff</color>
 
+    <color name="lojinha_background">#b4d2e4</color>
+
 
     <!-- card colors -->
     <color name="card_background">#ffffff</color>

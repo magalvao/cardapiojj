@@ -7,4 +7,5 @@ public class Screens {
 
     public static final String MAIN = "Menu Screen";
     public static final String HELP = "Help Screen";
+    public static final String LOJINHA = "Lojinha Screen";
 }

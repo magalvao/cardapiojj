@@ -1,8 +1,11 @@
 package com.keyo.cardapio.main;
 
 import android.app.AlarmManager;
+import android.app.Dialog;
 import android.content.Context;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
@@ -22,6 +25,7 @@ import com.keyo.cardapio.base.Screens;
 import com.keyo.cardapio.dao.AppPreferences;
 import com.keyo.cardapio.dao.CardapioDAO;
 import com.keyo.cardapio.help.view.HelpActivity;
+import com.keyo.cardapio.lojinha.view.LojinhaActivity;
 import com.keyo.cardapio.main.bo.CardapioBO;
 import com.keyo.cardapio.main.dao.NotificationDAO;
 import com.keyo.cardapio.main.presenter.MainPresenter;
@@ -53,6 +57,7 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
     private View mEmptyView;
     private SweetAlertDialog mDialog;
     private boolean mForcedRefresh = false;
+    private Dialog mFeaturePopup;
 
     @NonNull
     @Override
@@ -96,6 +101,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
         super.onDestroy();
         if (mDialog != null) {
             mDialog.dismiss();
+        }
+        if(mFeaturePopup != null) {
+            mFeaturePopup.dismiss();
         }
     }
 
@@ -214,6 +222,21 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
         startActivity(Intent.createChooser(sharingIntent, "Compartilhar onde?"));
     }
 
+    @Override
+    public void notifyNewFeature() {
+        mFeaturePopup = new Dialog(MainActivity.this);
+        mFeaturePopup.setContentView(R.layout.popup_feature_orders);
+        mFeaturePopup.findViewById(R.id.closeButton).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(final View v) {
+                mFeaturePopup.dismiss();
+                mPresenter.popupClosed();
+            }
+        });
+        mFeaturePopup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        mFeaturePopup.show();
+    }
+
     private Map<Date, List<Cardapio>> orderListByDate(HashMap<Date, List<Cardapio>> hash) {
         return new TreeMap<Date, List<Cardapio>>(hash);
     }
@@ -249,6 +272,11 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
 
         if (id == R.id.action_info) {
             startActivity(HelpActivity.createIntent(this));
+            return true;
+        }
+
+        if (id == R.id.action_lojinha) {
+            startActivity(LojinhaActivity.createIntent(this));
             return true;
         }
 

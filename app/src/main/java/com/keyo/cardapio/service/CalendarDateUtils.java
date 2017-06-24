@@ -427,6 +427,11 @@ public class CalendarDateUtils {
     public static Date getThisWeekMonday() {
         final Calendar calendar = Calendar.getInstance(Locale.getDefault());
         calendar.setTime(new Date());
+
+        if(calendar.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY) {
+            calendar.add(Calendar.DAY_OF_YEAR, -1);
+        }
+
         calendar.set(Calendar.DAY_OF_WEEK, Calendar.MONDAY);
         calendar.set(Calendar.HOUR_OF_DAY, 0);
         calendar.set(Calendar.MINUTE, 0);

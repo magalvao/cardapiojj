@@ -4,4 +4,6 @@
     <string name="drawer_open">Abrir</string>
     <string name="drawer_close">Fechar</string>
     <string name="menu_title">Cardápio</string>
+    <string name="last_number">Último Pedido:</string>
+    <string name="updated_at">Atualizado em:</string>
 </resources>

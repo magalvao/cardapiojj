@@ -1,0 +1,58 @@
+package com.keyo.cardapio.lojinha.dao;
+
+import android.support.annotation.NonNull;
+import android.util.Log;
+
+import com.keyo.cardapio.dao.AppPreferences;
+import com.keyo.cardapio.lojinha.model.Track;
+import com.keyo.cardapio.service.TrackingService;
+
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
+import okhttp3.OkHttpClient;
+import retrofit2.Retrofit;
+import retrofit2.converter.gson.GsonConverterFactory;
+
+/**
+ * Created by mgalvao3 on 17/06/17.
+ */
+
+public class LojinhaDAO {
+    private final TrackingService mService;
+    private final AppPreferences  mAppPreferences;
+
+    public LojinhaDAO(@NonNull final String baseUrl, @NonNull final AppPreferences appPreferences) {
+        mAppPreferences = appPreferences;
+
+        OkHttpClient client = new OkHttpClient.Builder()
+                .readTimeout(5, TimeUnit.SECONDS)
+                .connectTimeout(5, TimeUnit.SECONDS)
+                .writeTimeout(5, TimeUnit.SECONDS)
+                .build();
+        Retrofit retrofit = new Retrofit.Builder().baseUrl(baseUrl)
+                .client(client)
+                .addConverterFactory(GsonConverterFactory.create())
+                .build();
+        mService = retrofit.create(TrackingService.class);
+    }
+
+    public Track fetchTracking() {
+        try {
+            final Track result = mService.getTracking().execute().body();
+            if (result != null) {
+                return result;
+            }
+        } catch (IOException e) {
+            Log.e("Tracking", "IO Error fetching tracking number.", e);
+
+            return null;
+        }
+
+        return null;
+    }
+
+    public void saveTrackNumber(final Track track) {
+        mAppPreferences.saveTrackingNumber(track.getLastTrackNumber());
+    }
+}
