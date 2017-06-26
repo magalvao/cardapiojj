@@ -3,14 +3,20 @@ package com.keyo.cardapio.lojinha.view;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
+import android.support.v7.app.AlertDialog;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
+import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.EditText;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -21,12 +27,15 @@ import com.keyo.cardapio.base.Screens;
 import com.keyo.cardapio.dao.AppPreferences;
 import com.keyo.cardapio.lojinha.bo.LojinhaBO;
 import com.keyo.cardapio.lojinha.dao.LojinhaDAO;
+import com.keyo.cardapio.lojinha.model.Order;
 import com.keyo.cardapio.lojinha.presenter.LojinhaPresenter;
 import com.keyo.cardapio.task.AppTaskExecutor;
 
 import org.joda.time.DateTime;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
+
+import java.util.List;
 
 import cn.pedant.SweetAlert.SweetAlertDialog;
 
@@ -39,7 +48,12 @@ public class LojinhaActivity extends BaseActivity<LojinhaPresenter> implements L
     private TextView mLastOrderTextView;
     private TextView mOrderDateTextView;
     private SweetAlertDialog mDialog;
+    private OrderListAdapter mAdapter;
+    private View mEmptyState;
 
+    public static Intent createIntent(final Context context) {
+        return new Intent(context, LojinhaActivity.class);
+    }
 
     @NonNull
     @Override
@@ -52,7 +66,7 @@ public class LojinhaActivity extends BaseActivity<LojinhaPresenter> implements L
     protected LojinhaPresenter createPresenter(@NonNull final Context context) {
         AppPreferences appPreferences = new AppPreferences(context);
         return new LojinhaPresenter(new LojinhaBO(new LojinhaDAO(BuildConfig.TRACKING_BASE_URL, appPreferences)),
-            new AppTaskExecutor(LojinhaActivity.this), new AppPreferences(this), this);
+                new AppTaskExecutor(LojinhaActivity.this), new AppPreferences(this), this);
     }
 
     @Override
@@ -61,6 +75,10 @@ public class LojinhaActivity extends BaseActivity<LojinhaPresenter> implements L
         setContentView(R.layout.activity_lojinha);
 
         Toolbar myToolbar = (Toolbar) findViewById(R.id.my_toolbar);
+        RecyclerView list = (RecyclerView) findViewById(R.id.list);
+        mEmptyState = findViewById(R.id.emptyState);
+        View fab = findViewById(R.id.floatingActionButton);
+        fab.setOnClickListener(v -> mPresenter.onAddClicked());
         myToolbar.setTitle("Lojinha");
         myToolbar.setTitleTextColor(getResources().getColor(R.color.white));
         setSupportActionBar(myToolbar);
@@ -71,6 +89,10 @@ public class LojinhaActivity extends BaseActivity<LojinhaPresenter> implements L
         mLastOrderTextView = (TextView) findViewById(R.id.last_order);
         mOrderDateTextView = (TextView) findViewById(R.id.order_date);
 
+        mAdapter = new OrderListAdapter(this);
+        list.setAdapter(mAdapter);
+        list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
+
         showLastData();
         mPresenter.startUpdate();
 
@@ -78,17 +100,13 @@ public class LojinhaActivity extends BaseActivity<LojinhaPresenter> implements L
             @Override
             public boolean onLongClick(final View v) {
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("Último Pedido", mLastOrderTextView.getText());
+                ClipData clip = ClipData.newPlainText("Último Order", mLastOrderTextView.getText());
                 clipboard.setPrimaryClip(clip);
 
                 Toast.makeText(LojinhaActivity.this, "Copiado!", Toast.LENGTH_SHORT).show();
                 return true;
             }
         });
-    }
-
-    public static Intent createIntent(final Context context) {
-        return new Intent(context, LojinhaActivity.class);
     }
 
     @Override
@@ -121,12 +139,12 @@ public class LojinhaActivity extends BaseActivity<LojinhaPresenter> implements L
             return true;
         }
 
-        if(id == R.id.action_share) {
-            if(!mLastOrderTextView.getText().toString().equals("-")) {
+        if (id == R.id.action_share) {
+            if (!mLastOrderTextView.getText().toString().equals("-")) {
                 shareNumber();
-            } else  {
+            } else {
                 Snackbar.make(findViewById(R.id.rootLayout),
-                              "Número indisponível!", Snackbar.LENGTH_LONG).show();
+                        "Número indisponível!", Snackbar.LENGTH_LONG).show();
             }
             return true;
         }
@@ -146,6 +164,7 @@ public class LojinhaActivity extends BaseActivity<LojinhaPresenter> implements L
     @Override
     public void updateTracking(final String lastTrackNumber) {
         mLastOrderTextView.setText(lastTrackNumber);
+        mAdapter.setLastOrder(lastTrackNumber);
 
         DateTime dt = DateTime.now();
         DateTimeFormatter fmt = DateTimeFormat.forPattern("dd/MM/yyyy HH:mm");
@@ -155,7 +174,7 @@ public class LojinhaActivity extends BaseActivity<LojinhaPresenter> implements L
     @Override
     public void showLastData() {
         AppPreferences pref = new AppPreferences(this);
-        if(pref.getLastTrackingNumber().equals("")) {
+        if (pref.getLastTrackingNumber().equals("")) {
             mLastOrderTextView.setText("-");
             mOrderDateTextView.setText("-");
         } else {
@@ -170,6 +189,29 @@ public class LojinhaActivity extends BaseActivity<LojinhaPresenter> implements L
     @Override
     public void showErrorMessage() {
         Snackbar.make(findViewById(R.id.rootLayout),
-                      "Não foi possível atualizar. Verifique sua conexão com a Internet.", Snackbar.LENGTH_LONG).show();
+                "Não foi possível atualizar. Verifique sua conexão com a Internet.", Snackbar.LENGTH_LONG).show();
+    }
+
+    @Override
+    public void showOrders(final List<Order> result) {
+        if (result.isEmpty()) {
+            mEmptyState.setVisibility(View.VISIBLE);
+        } else {
+            mEmptyState.setVisibility(View.INVISIBLE);
+            mAdapter.setOrders(result);
+        }
+    }
+
+    @Override
+    public void showInputDialog() {
+        View viewInflated = LayoutInflater.from(this).inflate(R.layout.dialog_input, null);
+        new AlertDialog.Builder(this)
+                .setView(viewInflated)
+                .setPositiveButton("Verificar", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int whichButton) {
+                        String value = ((EditText) viewInflated.findViewById(R.id.input)).getText().toString();
+                        mPresenter.saveOrder(value);
+                    }
+                }).show();
     }
 }
