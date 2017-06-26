@@ -7,6 +7,7 @@ import android.support.annotation.Nullable;
 
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
+import com.keyo.cardapio.lojinha.model.Order;
 import com.keyo.cardapio.model.Cardapio;
 
 import org.joda.time.DateTime;
@@ -21,17 +22,18 @@ import java.util.List;
 
 public class AppPreferences {
 
-    public static final String LAST_LIST             = "LAST_LIST";
-    public static final String HOUR                  = "HOUR";
-    public static final int     DEFAULT_HOUR          = 12;
-    public static final int     DEFAULT_MINUTE        = 0;
-    public static final String  MINUTE                = "MINUTE";
-    public static final String  NOTIFICATIONS_ALLOWED = "NOTIFICATIONS_ALLOWED";
-    private static final String PREF_NAME             = "JJ_CARDAPIO";
-    private static final String LAST_TRACKING         = "LAST_TRACKING";
-    private static final String LAST_TRACKING_TIME    = "LAST_TRACKING_TIME";
-    public static final int     LAST_FEATURE_CODE     = 1;
-    public static final String  SHOW_FEATURE_POPUP    = "SHOW_FEATURE_POPUP";
+    public static final String LAST_LIST = "LAST_LIST";
+    public static final String HOUR = "HOUR";
+    public static final int DEFAULT_HOUR = 12;
+    public static final int DEFAULT_MINUTE = 0;
+    public static final String MINUTE = "MINUTE";
+    public static final String NOTIFICATIONS_ALLOWED = "NOTIFICATIONS_ALLOWED";
+    public static final int LAST_FEATURE_CODE = 1;
+    public static final String SHOW_FEATURE_POPUP = "SHOW_FEATURE_POPUP";
+    public static final String ORDER = "ORDERS";
+    private static final String PREF_NAME = "JJ_CARDAPIO";
+    private static final String LAST_TRACKING = "LAST_TRACKING";
+    private static final String LAST_TRACKING_TIME = "LAST_TRACKING_TIME";
     private final SharedPreferences mSharedPreferences;
 
     public AppPreferences(@NonNull final Context context) {
@@ -56,7 +58,8 @@ public class AppPreferences {
         }
 
         Gson gson = new Gson();
-        Type listType = new TypeToken<ArrayList<Cardapio>>() {}.getType();
+        Type listType = new TypeToken<ArrayList<Cardapio>>() {
+        }.getType();
         return gson.fromJson(json, listType);
     }
 
@@ -102,13 +105,36 @@ public class AppPreferences {
         return mSharedPreferences.getLong(LAST_TRACKING_TIME, -1);
     }
 
+    public int getPopupFeatureValue() {
+        return mSharedPreferences.getInt(SHOW_FEATURE_POPUP, -1);
+    }
+
     public void setPopupFeatureValue(final int featureOrdernumber) {
         SharedPreferences.Editor edit = mSharedPreferences.edit();
         edit.putInt(SHOW_FEATURE_POPUP, featureOrdernumber);
         edit.apply();
     }
 
-    public int getPopupFeatureValue() {
-        return mSharedPreferences.getInt(SHOW_FEATURE_POPUP, -1);
+    public List<Order> fetchPedidos() {
+        String pedidosString = mSharedPreferences.getString(ORDER, null);
+        final ArrayList<Order> result = new ArrayList<>();
+        if (pedidosString != null) {
+            String[] values = pedidosString.split(";");
+            for (final String value : values) {
+                result.add(new Order(value));
+            }
+        }
+        return result;
+    }
+
+    public void updateOrders(@NonNull  final List<Order> orders) {
+        String finalOrders = "";
+        for (int i = 0; i < orders.size(); i++) {
+            finalOrders = finalOrders.concat(orders.get(i).getNumber());
+            finalOrders = finalOrders.concat(";");
+        }
+        SharedPreferences.Editor edit = mSharedPreferences.edit();
+        edit.putString(ORDER, finalOrders);
+        edit.apply();
     }
 }

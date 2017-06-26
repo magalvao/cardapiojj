@@ -4,10 +4,13 @@ import android.support.annotation.NonNull;
 import android.util.Log;
 
 import com.keyo.cardapio.dao.AppPreferences;
+import com.keyo.cardapio.lojinha.model.Order;
 import com.keyo.cardapio.lojinha.model.Track;
 import com.keyo.cardapio.service.TrackingService;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
@@ -20,7 +23,7 @@ import retrofit2.converter.gson.GsonConverterFactory;
 
 public class LojinhaDAO {
     private final TrackingService mService;
-    private final AppPreferences  mAppPreferences;
+    private final AppPreferences mAppPreferences;
 
     public LojinhaDAO(@NonNull final String baseUrl, @NonNull final AppPreferences appPreferences) {
         mAppPreferences = appPreferences;
@@ -54,5 +57,16 @@ public class LojinhaDAO {
 
     public void saveTrackNumber(final Track track) {
         mAppPreferences.saveTrackingNumber(track.getLastTrackNumber());
+    }
+
+    public List<Order> fetchPedidos() {
+        return mAppPreferences.fetchPedidos();
+    }
+
+    public void saveOrder(final String value) {
+        List<Order> orders = new ArrayList<>();
+        orders.add(new Order(value));
+        orders.addAll(mAppPreferences.fetchPedidos());
+        mAppPreferences.updateOrders(orders);
     }
 }

@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+                xmlns:tools="http://schemas.android.com/tools"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="vertical">
+
+    <TextView
+        android:id="@+id/number_label"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="@dimen/spacing_large"
+        android:layout_marginTop="@dimen/spacing_normal"
+        android:fontFamily="sans-serif-medium"
+        android:textSize="15sp"
+        android:text="@string/number_of_item"
+        android:textStyle="bold"
+        />
+
+    <TextView
+        android:id="@+id/number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignStart="@+id/number_label"
+        android:layout_below="@+id/number_label"
+        tools:text="14"
+        />
+
+    <ImageView
+        android:id="@+id/image_status"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_alignBottom="@+id/number"
+        android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
+        android:layout_marginEnd="@dimen/spacing_large"
+        android:background="@android:drawable/presence_offline"/>
+
+    <TextView
+        android:id="@+id/textLabel"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentEnd="true"
+        android:layout_below="@+id/number"
+        android:layout_marginEnd="@dimen/spacing_large"
+        android:text="@string/available_for_retrieve"
+        />
+
+    <View
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:layout_below="@+id/textLabel"
+        android:background="@color/lightwhite"
+        android:layout_marginTop="@dimen/spacing_small"
+        />
+
+
+
+</RelativeLayout>
