@@ -44,6 +44,7 @@ captures/
 
 # Local configuration file (sdk path, etc)
 local.properties
+app/gradle.properties
 
 # Signing files
 .signing/
