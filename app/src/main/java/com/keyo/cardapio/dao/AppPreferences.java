@@ -118,7 +118,7 @@ public class AppPreferences {
     public List<Order> fetchPedidos() {
         String pedidosString = mSharedPreferences.getString(ORDER, null);
         final ArrayList<Order> result = new ArrayList<>();
-        if (pedidosString != null) {
+        if (pedidosString != null && !"".equals(pedidosString)) {
             String[] values = pedidosString.split(";");
             for (final String value : values) {
                 result.add(new Order(value));

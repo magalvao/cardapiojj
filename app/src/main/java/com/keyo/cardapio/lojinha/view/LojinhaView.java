@@ -12,6 +12,8 @@ public interface LojinhaView {
 
     void updateTracking(String lastTrackNumber);
 
+    void deleteOrder(String order);
+
     void showLastData();
 
     void showErrorMessage();
@@ -19,4 +21,6 @@ public interface LojinhaView {
     void showOrders(List<Order> result);
 
     void showInputDialog();
+
+    void showOrderDialog(String order, final boolean ready);
 }

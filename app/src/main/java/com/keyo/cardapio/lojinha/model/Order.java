@@ -1,16 +1,21 @@
 package com.keyo.cardapio.lojinha.model;
 
+import android.support.annotation.NonNull;
+
 /**
  * Created by renarosantos1 on 26/06/17.
  */
 
-public class Order {
+public class Order implements Comparable<Order> {
 
-    private final String number;
+    private String number;
+    private boolean shouldTrack = false;
+    private boolean alreadyDelivered = false;
 
     public Order(final String number) {
         this.number = number;
     }
+
 
     public boolean isAvailableForRetrieve(final String ultimoPedido) {
         if (ultimoPedido == null || number == null) {
@@ -28,5 +33,14 @@ public class Order {
 
     public String getNumber() {
         return number;
+    }
+
+    public Long getNumberConverted() {
+        return Long.parseLong(number);
+    }
+
+    @Override
+    public int compareTo(@NonNull final Order o) {
+        return getNumberConverted() >= o.getNumberConverted() ? 1 : -1;
     }
 }

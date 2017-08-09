@@ -15,10 +15,9 @@ android {
         applicationId "com.keyo.cardapio"
         minSdkVersion 17
         targetSdkVersion 25
-        versionCode 5
-        versionName "1.0.5"
+        versionCode 6
+        versionName "1.0.6"
         testInstrumentationRunner "android.support.test.runner.AndroidJUnitRunner"
-
 
         //Remember to create your own "gradle.properties" file from the template
         buildConfigField "String", "SERVER_BASE_URL", serverBaseUrl
@@ -31,6 +30,11 @@ android {
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            signingConfig signingConfigs.config
+        }
+        debug {
+            debuggable true
+            minifyEnabled false
             signingConfig signingConfigs.config
         }
     }

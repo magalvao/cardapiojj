@@ -45,7 +45,11 @@ public class LojinhaPresenter extends BasePresenter {
     public void saveOrder(final String value) {
         mLojinhaBO.saveOrder(value);
         mAppTaskExecutor.async(new FetchPedidosTask());
+    }
 
+    public void deleteOrder(final String value) {
+        mLojinhaBO.deleteOrder(value);
+        mAppTaskExecutor.async(new FetchPedidosTask());
     }
 
     private class UpdateTrackingTask implements AppTask<Track> {

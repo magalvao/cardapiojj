@@ -32,4 +32,8 @@ public class LojinhaBO {
     public void saveOrder(final String value) {
         mLojinhaDAO.saveOrder(value);
     }
+
+    public void deleteOrder(final String value) {
+        mLojinhaDAO.deleteOrder(value);
+    }
 }

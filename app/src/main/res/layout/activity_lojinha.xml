@@ -6,7 +6,7 @@
     android:id="@+id/rootLayout"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/lojinha_background">
+    android:background="@color/white">
 
     <android.support.v7.widget.Toolbar
         android:id="@+id/my_toolbar"
@@ -21,22 +21,54 @@
 
     <LinearLayout
         android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/last_update_layout"
+        android:layout_gravity="bottom"
+        app:layout_constraintTop_toBottomOf="@id/my_toolbar"
+        android:orientation="vertical"
+
+        android:layout_marginTop="16dp">
+
+        <TextView
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="@string/updated_at"
+            android:textColor="@color/text_subtitle"
+            android:textSize="12sp"
+        />
+
+        <TextView
+            android:id="@+id/order_date"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:text="-"
+            android:textColor="@color/text_subtitle"
+            android:textSize="14sp"
+        />
+
+
+    </LinearLayout>
+    <LinearLayout
+        android:layout_width="match_parent"
         android:layout_height="0dp"
         android:orientation="vertical"
-        app:layout_constraintBottom_toBottomOf="parent"
-        app:layout_constraintTop_toBottomOf="@id/my_toolbar">
+        android:id="@+id/layout_list"
+        app:layout_constraintTop_toBottomOf="@+id/last_update_layout"
+        app:layout_constraintStart_toStartOf="parent" android:layout_marginEnd="0dp"
+        app:layout_constraintEnd_toEndOf="parent">
 
         <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="0.7">
+            android:layout_height="wrap_content">
 
             <ImageView
                 android:id="@+id/boxesImage"
                 android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:scaleType="fitXY"
-                app:srcCompat="@drawable/empty_box"/>
+                android:layout_height="180dp"
+                android:scaleType="fitCenter"
+                app:srcCompat="@drawable/boxes"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -50,8 +82,8 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="@string/last_number"
-                    android:textColor="@color/white"
-                    android:textSize="16sp"
+                    android:textColor="@color/text"
+                    android:textSize="12sp"
                     />
 
                 <TextView
@@ -61,93 +93,65 @@
                     android:layout_height="wrap_content"
                     android:gravity="center"
                     android:text="-"
-                    android:textColor="@color/white"
-                    android:textSize="24sp"
+                    android:textColor="@color/text"
+                    android:textSize="22sp"
                     />
             </LinearLayout>
 
         </FrameLayout>
 
-        <LinearLayout
+    </LinearLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        app:layout_constraintBottom_toBottomOf="parent" app:layout_constraintTop_toBottomOf="@id/layout_list"
+        app:layout_constraintStart_toStartOf="parent" android:layout_marginEnd="0dp"
+        app:layout_constraintEnd_toEndOf="parent" android:id="@+id/relativeLayout">
+
+
+        <ImageView
+            android:id="@+id/header"
+            android:layout_alignParentTop="true"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:layout_gravity="bottom"
-            android:orientation="vertical"
+            android:scaleType="fitEnd"
+            android:src="@drawable/knockknock"
+        />
 
-            >
-
-            <TextView
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="@string/updated_at"
-                android:textColor="@color/white"
-                android:textSize="12sp"
-                />
-
-            <TextView
-                android:id="@+id/order_date"
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:gravity="center"
-                android:text="-"
-                android:textColor="@color/white"
-                android:textSize="14sp"
-                />
-
-            <android.support.design.widget.FloatingActionButton
-                android:id="@+id/floatingActionButton"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_marginBottom="16dp"
-                android:layout_marginEnd="16dp"
-                android:background="?attr/selectableItemBackground"
-                android:src="@drawable/plus_icon"
-                app:backgroundTint="@color/colorAccent"
-                android:layout_gravity="end"
-
-                />
-
-
-        </LinearLayout>
-
-        <RelativeLayout
+        <android.support.v7.widget.RecyclerView
+            android:id="@+id/list"
+            android:paddingTop="8dp"
             android:layout_width="match_parent"
-            android:layout_height="0dp"
-            android:layout_weight="1">
+            android:layout_height="match_parent"
+            android:layout_below="@+id/header"
+            android:background="@color/box_background"
+            android:paddingBottom="42dp"
+            android:clipToPadding="false"
+            tools:listitem="@layout/pedido_item"/>
+
+        <TextView
+            android:id="@+id/emptyState"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:layout_margin="@dimen/spacing_large"
+            android:gravity="center_horizontal"
+            android:text="Adicione seu número de pedido para acompanhar o status. Clique no '+' para adicionar"
+            android:textColor="#3a3a3a"
+            android:textSize="@dimen/font_large"
+            android:visibility="invisible"
+        />
 
 
-            <ImageView
-                android:id="@+id/header"
-                android:layout_width="match_parent"
-                android:layout_height="20dp"
-                android:src="@drawable/knockknock"
-                />
-
-            <android.support.v7.widget.RecyclerView
-                android:id="@+id/list"
-                android:layout_width="match_parent"
-                android:layout_height="match_parent"
-                android:layout_below="@+id/header"
-                android:layout_marginTop="-4dp"
-                android:background="#ffc59c"
-                tools:listitem="@layout/pedido_item"/>
-
-            <TextView
-                android:id="@+id/emptyState"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
-                android:gravity="center_horizontal"
-                android:textSize="@dimen/font_large"
-                style="@style/TextAppearance.SFBold"
-                android:textColor="#3a3a3a"
-                android:layout_margin="@dimen/spacing_large"
-                android:visibility="invisible"
-                android:text="Adicione seu número de pedido para acompanhar o status. Clique no '+' para adicionar"
-                />
-
-
-        </RelativeLayout>
-    </LinearLayout>
+    </RelativeLayout>
+    <android.support.design.widget.FloatingActionButton
+        android:id="@+id/floatingActionButton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="?attr/selectableItemBackground"
+        android:src="@drawable/plus_icon" app:backgroundTint="@color/colorAccent"
+        android:layout_marginBottom="8dp" tools:layout_editor_absoluteX="0dp"
+        app:layout_constraintEnd_toEndOf="@id/relativeLayout"
+        app:layout_constraintBottom_toBottomOf="@+id/relativeLayout"
+        android:layout_marginEnd="16dp"/>
 </android.support.constraint.ConstraintLayout>

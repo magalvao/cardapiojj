@@ -6,6 +6,6 @@
     <string name="menu_title">Cardápio</string>
     <string name="last_number">Último Pedido:</string>
     <string name="updated_at">Atualizado em:</string>
-    <string name="number_of_item">Número do order:</string>
+    <string name="number_of_item">Pedido N\u00B0:</string>
     <string name="available_for_retrieve">Disponível para retirada</string>
 </resources>

@@ -10,6 +10,8 @@ import com.keyo.cardapio.service.TrackingService;
 
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -67,6 +69,22 @@ public class LojinhaDAO {
         List<Order> orders = new ArrayList<>();
         orders.add(new Order(value));
         orders.addAll(mAppPreferences.fetchPedidos());
+
+        Collections.sort(orders, Collections.reverseOrder());
+
+        mAppPreferences.updateOrders(orders);
+    }
+
+    public void deleteOrder(final String value) {
+        List<Order> orders = new ArrayList<>(mAppPreferences.fetchPedidos());
+
+        for (Iterator<Order> iter = orders.listIterator(); iter.hasNext(); ) {
+            Order o = iter.next();
+            if (o.getNumber().equals(value)) {
+                iter.remove();
+            }
+        }
+
         mAppPreferences.updateOrders(orders);
     }
 }

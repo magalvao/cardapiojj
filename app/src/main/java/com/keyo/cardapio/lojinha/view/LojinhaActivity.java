@@ -1,22 +1,23 @@
 package com.keyo.cardapio.lojinha.view;
 
+import android.app.Dialog;
 import android.content.ClipData;
 import android.content.ClipboardManager;
 import android.content.Context;
-import android.content.DialogInterface;
 import android.content.Intent;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.support.design.widget.Snackbar;
-import android.support.v7.app.AlertDialog;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.support.v7.widget.Toolbar;
-import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.EditText;
+import android.widget.ImageView;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -50,6 +51,8 @@ public class LojinhaActivity extends BaseActivity<LojinhaPresenter> implements L
     private SweetAlertDialog mDialog;
     private OrderListAdapter mAdapter;
     private View mEmptyState;
+    private Dialog mOrderDialog;
+    private Dialog mInputDialog;
 
     public static Intent createIntent(final Context context) {
         return new Intent(context, LojinhaActivity.class);
@@ -59,6 +62,20 @@ public class LojinhaActivity extends BaseActivity<LojinhaPresenter> implements L
     @Override
     public String getScreenName() {
         return Screens.LOJINHA;
+    }
+
+    @Override
+    protected void onStop() {
+        super.onStop();
+        if(mDialog != null) {
+            mDialog.dismiss();
+        }
+        if(mOrderDialog != null) {
+            mOrderDialog.cancel();
+        }
+        if(mInputDialog != null) {
+            mInputDialog.cancel();
+        }
     }
 
     @NonNull
@@ -90,6 +107,7 @@ public class LojinhaActivity extends BaseActivity<LojinhaPresenter> implements L
         mOrderDateTextView = (TextView) findViewById(R.id.order_date);
 
         mAdapter = new OrderListAdapter(this);
+        mAdapter.setOnItemClickedListener(new OrderItemClicked());
         list.setAdapter(mAdapter);
         list.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
 
@@ -100,7 +118,7 @@ public class LojinhaActivity extends BaseActivity<LojinhaPresenter> implements L
             @Override
             public boolean onLongClick(final View v) {
                 ClipboardManager clipboard = (ClipboardManager) getSystemService(Context.CLIPBOARD_SERVICE);
-                ClipData clip = ClipData.newPlainText("Último Order", mLastOrderTextView.getText());
+                ClipData clip = ClipData.newPlainText("Último pedido", mLastOrderTextView.getText());
                 clipboard.setPrimaryClip(clip);
 
                 Toast.makeText(LojinhaActivity.this, "Copiado!", Toast.LENGTH_SHORT).show();
@@ -172,6 +190,11 @@ public class LojinhaActivity extends BaseActivity<LojinhaPresenter> implements L
     }
 
     @Override
+    public void deleteOrder(final String order) {
+        mPresenter.deleteOrder(order);
+    }
+
+    @Override
     public void showLastData() {
         AppPreferences pref = new AppPreferences(this);
         if (pref.getLastTrackingNumber().equals("")) {
@@ -194,24 +217,61 @@ public class LojinhaActivity extends BaseActivity<LojinhaPresenter> implements L
 
     @Override
     public void showOrders(final List<Order> result) {
+        mAdapter.setOrders(result);
+
         if (result.isEmpty()) {
             mEmptyState.setVisibility(View.VISIBLE);
         } else {
             mEmptyState.setVisibility(View.INVISIBLE);
-            mAdapter.setOrders(result);
         }
     }
 
     @Override
     public void showInputDialog() {
-        View viewInflated = LayoutInflater.from(this).inflate(R.layout.dialog_input, null);
-        new AlertDialog.Builder(this)
-                .setView(viewInflated)
-                .setPositiveButton("Verificar", new DialogInterface.OnClickListener() {
-                    public void onClick(DialogInterface dialog, int whichButton) {
-                        String value = ((EditText) viewInflated.findViewById(R.id.input)).getText().toString();
-                        mPresenter.saveOrder(value);
-                    }
-                }).show();
+        mInputDialog = new Dialog(LojinhaActivity.this);
+        mInputDialog.setContentView(R.layout.dialog_input);
+
+        TextView cancel = (TextView) mInputDialog.findViewById(R.id.cancel);
+        cancel.setOnClickListener( v -> mInputDialog.cancel() );
+
+        TextView ok = (TextView) mInputDialog.findViewById(R.id.ok);
+        ok.setOnClickListener( v -> {
+            String value = ((EditText) mInputDialog.findViewById(R.id.input)).getText().toString();
+            if(value.length() > 0) {
+                mPresenter.saveOrder(value);
+                mInputDialog.dismiss();
+            }
+        } );
+
+        mInputDialog.show();
+    }
+
+    @Override
+    public void showOrderDialog(final String order, final boolean ready) {
+        mOrderDialog = new Dialog(LojinhaActivity.this);
+        mOrderDialog.setContentView(R.layout.dialog_vieworder);
+        mOrderDialog.findViewById(R.id.closeButton).setOnClickListener(v -> mOrderDialog.dismiss());
+        ((TextView) mOrderDialog.findViewById(R.id.orderNumber)).setText(order);
+
+        if(!ready) {
+            ((ImageView) mOrderDialog.findViewById(R.id.orderStatus)).setImageResource(R.drawable.check_deny);
+            ((TextView) mOrderDialog.findViewById(R.id.orderStatusText)).setText("Não está pronto");
+        }
+
+        mOrderDialog.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
+        mOrderDialog.show();
+    }
+
+    private class OrderItemClicked implements OrderListAdapter.OnItemClicked {
+
+        @Override
+        public void deleteClicked(final String order) {
+            deleteOrder(order);
+        }
+
+        @Override
+        public void itemClicked(final String order, boolean ready) {
+            showOrderDialog(order, ready);
+        }
     }
 }

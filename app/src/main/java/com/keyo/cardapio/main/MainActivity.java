@@ -226,12 +226,9 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
     public void notifyNewFeature() {
         mFeaturePopup = new Dialog(MainActivity.this);
         mFeaturePopup.setContentView(R.layout.popup_feature_orders);
-        mFeaturePopup.findViewById(R.id.closeButton).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(final View v) {
-                mFeaturePopup.dismiss();
-                mPresenter.popupClosed();
-            }
+        mFeaturePopup.findViewById(R.id.closeButton).setOnClickListener(v -> {
+            mFeaturePopup.dismiss();
+            mPresenter.popupClosed();
         });
         mFeaturePopup.getWindow().setBackgroundDrawable(new ColorDrawable(Color.TRANSPARENT));
         mFeaturePopup.show();
