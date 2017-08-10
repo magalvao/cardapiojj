@@ -2,14 +2,14 @@
 <resources>
     <color name="colorPrimary">@color/red</color>
     <color name="colorPrimaryDark">@color/darkred</color>
-    <color name="colorAccent">#ff2d2d</color>
+    <color name="colorAccent">#be0257</color>
 
     <color name="transparent">#00000000</color>
 
     <color name="gray">#c9c9c9</color>
 
-    <color name="red">#D0011B</color>
-    <color name="darkred">#A60000</color>
+    <color name="red">#80003a</color>
+    <color name="darkred">#66012f</color>
     <color name="white">#ffffff</color>
     <color name="lightwhite">#70ffffff</color>
     <color name="text_subtitle">#747474</color>
