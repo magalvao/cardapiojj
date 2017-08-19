@@ -2,7 +2,7 @@ package com.keyo.cardapio.main.bo;
 
 import com.keyo.cardapio.dao.CardapioDAO;
 import com.keyo.cardapio.main.dao.NotificationDAO;
-import com.keyo.cardapio.model.Cardapio;
+import com.keyo.cardapio.model.CardapioDate;
 
 import java.util.List;
 
@@ -20,8 +20,8 @@ public class CardapioBO {
         mNotificationDAO = notificationDao;
     }
 
-    public List<Cardapio> fetchCardapio() {
-        List<Cardapio> cardapios = mCardapioDAO.fetchCardapio();
+    public List<CardapioDate> fetchCardapio() {
+        List<CardapioDate> cardapios = mCardapioDAO.fetchCardapio();
         if (cardapios != null) {
             mCardapioDAO.saveCardapios(cardapios);
             mNotificationDAO.scheduleNotifications();

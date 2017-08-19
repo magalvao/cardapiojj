@@ -12,11 +12,10 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import com.keyo.cardapio.R;
-import com.keyo.cardapio.main.bo.Meal;
-import com.keyo.cardapio.model.Cardapio;
+import com.keyo.cardapio.model.CardapioCategory;
+import com.keyo.cardapio.model.CardapioDate;
 
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -29,20 +28,20 @@ public class DayFragment extends Fragment {
 
     private static final String EXTRA_DATE = "EXTRA_DATE";
     public static final String EXTRA_CARDAPIO = "EXTRA_CARDAPIO";
-    private Date         mDate;
-    private RecyclerView mealsList;
-    private MealsListAdapter adapter;
-    private LinearLayoutManager mLinearLayoutManager;
-    private ArrayList<Cardapio> mMeals;
+    private Date                    mDate;
+    private RecyclerView            mealsList;
+    private MealsListAdapter        adapter;
+    private LinearLayoutManager     mLinearLayoutManager;
+    private CardapioDate mCardapio;
 
-    public static DayFragment newInstance(@Nullable Date date, @NonNull final List<Cardapio> meals) {
+    public static DayFragment newInstance(@Nullable Date date, @NonNull final CardapioDate meals) {
         DayFragment fragment = new DayFragment();
         fragment.setDate(date);
         Bundle bundle = new Bundle(2);
         if(date != null) {
             bundle.putLong(EXTRA_DATE, date.getTime());
         }
-        bundle.putSerializable(EXTRA_CARDAPIO, (ArrayList<Cardapio>)meals);
+        bundle.putSerializable(EXTRA_CARDAPIO, meals);
         fragment.setArguments(bundle);
         return fragment;
     }
@@ -55,7 +54,7 @@ public class DayFragment extends Fragment {
         date.setTime(getArguments().getLong(EXTRA_DATE));
         mDate = date;
 
-        mMeals = (ArrayList<Cardapio>) getArguments().getSerializable(EXTRA_CARDAPIO);
+        mCardapio = (CardapioDate) getArguments().getSerializable(EXTRA_CARDAPIO);
     }
 
     @Nullable
@@ -71,7 +70,7 @@ public class DayFragment extends Fragment {
         mealsList.setLayoutManager(mLinearLayoutManager);
 
         adapter = new MealsListAdapter(getContext());
-        adapter.addMeals(generateMealList());
+        adapter.addCategories(generateCategoriesList());
         mealsList.setAdapter(adapter);
 
         TextView title = (TextView) view.findViewById(R.id.date_title);
@@ -90,14 +89,8 @@ public class DayFragment extends Fragment {
         return sb.toString();
     }
 
-    private List<Meal> generateMealList() {
-        ArrayList<Meal> meals = new ArrayList<>();
-
-        for (Cardapio item : mMeals) {
-            meals.add(new Meal(item.getOptionName(), item.getDescription(), item.getLikes(), item.getDislikes()));
-        }
-
-        return meals;
+    private List<CardapioCategory> generateCategoriesList() {
+        return mCardapio.getCategories();
     }
 
     public int getWeekDay() {

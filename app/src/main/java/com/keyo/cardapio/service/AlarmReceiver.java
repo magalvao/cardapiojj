@@ -13,9 +13,8 @@ import android.text.Html;
 import com.keyo.cardapio.R;
 import com.keyo.cardapio.dao.AppPreferences;
 import com.keyo.cardapio.main.dao.NotificationDAO;
-import com.keyo.cardapio.model.Cardapio;
+import com.keyo.cardapio.model.CardapioDate;
 
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
@@ -38,33 +37,20 @@ public class AlarmReceiver extends BroadcastReceiver {
         final AlarmManager alarmManager = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         mNotificationDAO = new NotificationDAO(context, userPreference, alarmManager);
 
-        List<Cardapio> cardapios = userPreference.loadCardapio();
+        List<CardapioDate> cardapios = userPreference.loadCardapio();
         final boolean isNotificationsAllowed = userPreference.isNotificationAllowed();
         if (cardapios == null || !isNotificationsAllowed) {
             return;
         }
-        ArrayList<Cardapio> todayMeals = (ArrayList<Cardapio>) findTodayMeals(cardapios);
-
-        NotificationManager notificationManager =
-                (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-
-        Notification notification = createNotificationForCardapido(context, formatNotificationDescription(todayMeals));
-        notificationManager.notify(CARDAPIO_NOTIFICATION_ID, notification);
+        CardapioDate todayMeals = findTodayMeals(cardapios);
+        if (todayMeals != null) {
+            NotificationManager notificationManager =
+                    (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            Notification notification = createNotificationForCardapido(context, todayMeals.toString());
+            notificationManager.notify(CARDAPIO_NOTIFICATION_ID, notification);
+        }
     }
 
-    private String formatNotificationDescription(final ArrayList<Cardapio> todayMeals) {
-        if (todayMeals == null || todayMeals.isEmpty()) {
-            return "Abra o app para atualizar o cardápio da semana!";
-        }
-
-        StringBuilder description = new StringBuilder();
-        for (Cardapio meal : todayMeals) {
-            description.append("<b>").append(meal.getOptionName()).append(":</b> ")
-                    .append(meal.getDescription()).append("<br />");
-        }
-
-        return description.toString();
-    }
 
     private Notification createNotificationForCardapido(final Context context, final String notificationDescription) {
 
@@ -84,20 +70,18 @@ public class AlarmReceiver extends BroadcastReceiver {
         return builder.build();
     }
 
-    private List<Cardapio> findTodayMeals(@NonNull final List<Cardapio> cardapios) {
-
-        ArrayList<Cardapio> list = new ArrayList<>();
+    private CardapioDate findTodayMeals(@NonNull final List<CardapioDate> cardapios) {
 
         CalendarDateUtils calendarDateUtils = new CalendarDateUtils();
         Date today = Calendar.getInstance().getTime();
-        for (final Cardapio cardapio : cardapios) {
+        for (final CardapioDate cardapio : cardapios) {
             Date cardapioDate = cardapio.getDate();
             boolean sameDay = calendarDateUtils.isSameDay(today, cardapioDate);
             if (sameDay) {
-                list.add(cardapio);
+                return cardapio;
             }
         }
-        return list;
+        return null;
     }
 
 

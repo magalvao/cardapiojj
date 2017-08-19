@@ -1,6 +1,6 @@
 package com.keyo.cardapio.main.view;
 
-import com.keyo.cardapio.model.Cardapio;
+import com.keyo.cardapio.model.CardapioDate;
 
 import java.util.Date;
 import java.util.List;
@@ -10,7 +10,7 @@ import java.util.List;
  */
 public interface MainView {
 
-    void updateList(List<Cardapio> list);
+    void updateList(List<CardapioDate> list);
 
     void setRefreshing(boolean state);
 

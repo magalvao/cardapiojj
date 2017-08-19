@@ -30,7 +30,7 @@ import com.keyo.cardapio.main.bo.CardapioBO;
 import com.keyo.cardapio.main.dao.NotificationDAO;
 import com.keyo.cardapio.main.presenter.MainPresenter;
 import com.keyo.cardapio.main.view.MainView;
-import com.keyo.cardapio.model.Cardapio;
+import com.keyo.cardapio.model.CardapioDate;
 import com.keyo.cardapio.service.CalendarDateUtils;
 import com.keyo.cardapio.task.AppTaskExecutor;
 
@@ -109,14 +109,16 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
 
 
     @Override
-    public void updateList(@NonNull final List<Cardapio> list) {
+    public void updateList(@NonNull final List<CardapioDate> list) {
 
         tabLayout.removeAllTabs();
 
         if (list.isEmpty()
                 || (!list.isEmpty() && list.get(0).getDate().before(CalendarDateUtils.getThisWeekMonday()))) {
             ViewPagerAdapter adapter = new ViewPagerAdapter(getSupportFragmentManager());
-            adapter.addFragment(DayFragment.newInstance(null, new ArrayList<Cardapio>()), "");
+            CardapioDate emptyDate = new CardapioDate("2099-01-01");
+            emptyDate.setCategories(new ArrayList<>());
+            adapter.addFragment(DayFragment.newInstance(null, emptyDate), "");
             viewPager.setVisibility(View.GONE);
             viewPager.setAdapter(adapter);
             mPresenter.setViewPager(viewPager);
@@ -134,28 +136,28 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
             SimpleDateFormat sdfWeek = new SimpleDateFormat("EEE", new Locale("pt", "BR"));
             SimpleDateFormat sdfDay = new SimpleDateFormat("dd/MM", new Locale("pt", "BR"));
 
-            HashMap<Date, List<Cardapio>> hash = new HashMap<>();
+            HashMap<Date, List<CardapioDate>> hash = new HashMap<>();
 
-            for (Cardapio cardapio : list) {
+            for (CardapioDate cardapioDate : list) {
 
-                if (hash.containsKey(cardapio.getDate())) {
-                    List<Cardapio> item = hash.get(cardapio.getDate());
-                    item.add(cardapio);
-                    hash.put(cardapio.getDate(), item);
+                if (hash.containsKey(cardapioDate.getDate())) {
+                    List<CardapioDate> item = hash.get(cardapioDate.getDate());
+                    item.add(cardapioDate);
+                    hash.put(cardapioDate.getDate(), item);
                 } else {
-                    List<Cardapio> item = new ArrayList<>();
-                    item.add(cardapio);
-                    hash.put(cardapio.getDate(), item);
+                    List<CardapioDate> item = new ArrayList<>();
+                    item.add(cardapioDate);
+                    hash.put(cardapioDate.getDate(), item);
                 }
             }
 
-            TreeMap<Date, List<Cardapio>> map = (TreeMap<Date, List<Cardapio>>) orderListByDate(hash);
-            for (Map.Entry<Date, List<Cardapio>> entry : map.entrySet()) {
+            TreeMap<Date, List<CardapioDate>> map = (TreeMap<Date, List<CardapioDate>>) orderListByDate(hash);
+            for (Map.Entry<Date, List<CardapioDate>> entry : map.entrySet()) {
                 Date key = entry.getKey();
-                List<Cardapio> value = entry.getValue();
+                List<CardapioDate> value = entry.getValue();
 
                 String weekdayName = sdfWeek.format(key);
-                adapter.addFragment(DayFragment.newInstance(key, (ArrayList<Cardapio>) value),
+                adapter.addFragment(DayFragment.newInstance(key, value.get(0)),
                         weekdayName + "\n" + sdfDay.format(key));
             }
 
@@ -234,8 +236,8 @@ public class MainActivity extends BaseActivity<MainPresenter> implements MainVie
         mFeaturePopup.show();
     }
 
-    private Map<Date, List<Cardapio>> orderListByDate(HashMap<Date, List<Cardapio>> hash) {
-        return new TreeMap<Date, List<Cardapio>>(hash);
+    private Map<Date, List<CardapioDate>> orderListByDate(HashMap<Date, List<CardapioDate>> hash) {
+        return new TreeMap<Date, List<CardapioDate>>(hash);
     }
 
     @Override

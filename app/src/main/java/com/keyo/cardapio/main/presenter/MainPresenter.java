@@ -9,7 +9,7 @@ import com.keyo.cardapio.main.DayFragment;
 import com.keyo.cardapio.main.ViewPagerAdapter;
 import com.keyo.cardapio.main.bo.CardapioBO;
 import com.keyo.cardapio.main.view.MainView;
-import com.keyo.cardapio.model.Cardapio;
+import com.keyo.cardapio.model.CardapioDate;
 import com.keyo.cardapio.task.AppTask;
 import com.keyo.cardapio.task.TaskExecutor;
 
@@ -86,20 +86,20 @@ public class MainPresenter extends BasePresenter {
         mTaskExecutor.async(new UpdateCardapioTask());
     }
 
-    public void prepareToShare(final Date currentDate, final List<Cardapio> cardapios) {
-        ArrayList<Cardapio> list = new ArrayList<>();
+    public void prepareToShare(final Date currentDate, final List<CardapioDate> cardapios) {
+        ArrayList<CardapioDate> list = new ArrayList<>();
         StringBuilder textToShare = new StringBuilder();
 
         SimpleDateFormat sdf = new SimpleDateFormat("EEEE dd/MMM", Locale.getDefault());
 
         textToShare.append("*Cardápio de ").append(sdf.format(currentDate)).append("*\n\n");
 
-        for (final Cardapio meal : cardapios) {
-            Date cardapioDate = meal.getDate();
+        for (final CardapioDate item : cardapios) {
+            Date cardapioDate = item.getDate();
             if (cardapioDate.equals(currentDate)) {
-                textToShare.append("*").append(meal.getOptionName()).append("*: ")
-                        .append(meal.getDescription()).append("\n ");
+                textToShare.append(item.toString()).append("\n ");
             }
+
         }
 
         mView.shareCardapio(textToShare.toString(), currentDate);
@@ -109,15 +109,15 @@ public class MainPresenter extends BasePresenter {
         mAppPreferences.setPopupFeatureValue(AppPreferences.LAST_FEATURE_CODE);
     }
 
-    private class UpdateCardapioTask implements AppTask<List<Cardapio>> {
+    private class UpdateCardapioTask implements AppTask<List<CardapioDate>> {
 
         @Override
-        public List<Cardapio> execute() {
+        public List<CardapioDate> execute() {
             return mCardapioBO.fetchCardapio();
         }
 
         @Override
-        public void onPostExecute(@Nullable final List<Cardapio> result) {
+        public void onPostExecute(@Nullable final List<CardapioDate> result) {
             mView.setRefreshing(false);
 
             if (result != null && !result.isEmpty()) {

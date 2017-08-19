@@ -3,8 +3,8 @@ package com.keyo.cardapio.dao;
 import android.support.annotation.NonNull;
 import android.util.Log;
 
-import com.keyo.cardapio.model.Cardapio;
-import com.keyo.cardapio.model.CardapioList;
+import com.keyo.cardapio.model.CardapioDate;
+import com.keyo.cardapio.service.CardapioConverter;
 import com.keyo.cardapio.service.CardapioService;
 
 import java.io.IOException;
@@ -14,7 +14,7 @@ import java.util.concurrent.TimeUnit;
 
 import okhttp3.OkHttpClient;
 import retrofit2.Retrofit;
-import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
 
 /**
  * Created by mgalvao3 on 09/03/17.
@@ -29,9 +29,6 @@ public class CardapioDAO {
     public CardapioDAO(@NonNull final String baseUrl, @NonNull final AppPreferences appPreferences) {
         mAppPreferences = appPreferences;
 
-        //HttpLoggingInterceptor interceptor = new HttpLoggingInterceptor();
-        //interceptor.setLevel(HttpLoggingInterceptor.Level.BODY);
-
         OkHttpClient client = new OkHttpClient.Builder()
                 .readTimeout(5, TimeUnit.SECONDS)
                 .connectTimeout(5, TimeUnit.SECONDS)
@@ -39,16 +36,17 @@ public class CardapioDAO {
                 .build();
         Retrofit retrofit = new Retrofit.Builder().baseUrl(baseUrl)
                 .client(client)
-                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(ScalarsConverterFactory.create())
                 .build();
+
         mService = retrofit.create(CardapioService.class);
     }
 
-    public List<Cardapio> fetchCardapio() {
+    public List<CardapioDate> fetchCardapio() {
         try {
-            final CardapioList result = mService.getCardapio().execute().body();
+            final String result = mService.getCardapio().execute().body();
             if (result != null) {
-                return result.items();
+                return CardapioConverter.convert(result);
             }
         } catch (IOException e) {
             Log.e("CardapioList", "IO Error fetching documents.", e);
@@ -63,7 +61,7 @@ public class CardapioDAO {
         this.mErrorListener = mErrorListener;
     }
 
-    public void saveCardapios(final List<Cardapio> cardapios) {
+    public void saveCardapios(final List<CardapioDate> cardapios) {
         mAppPreferences.saveCardapio(cardapios);
     }
 

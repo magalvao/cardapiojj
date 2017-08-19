@@ -8,7 +8,7 @@ import android.support.annotation.Nullable;
 import com.google.gson.Gson;
 import com.google.gson.reflect.TypeToken;
 import com.keyo.cardapio.lojinha.model.Order;
-import com.keyo.cardapio.model.Cardapio;
+import com.keyo.cardapio.model.CardapioDate;
 
 import org.joda.time.DateTime;
 
@@ -40,7 +40,7 @@ public class AppPreferences {
         mSharedPreferences = context.getSharedPreferences(PREF_NAME, Context.MODE_PRIVATE);
     }
 
-    public void saveCardapio(List<Cardapio> list) {
+    public void saveCardapio(List<CardapioDate> list) {
         SharedPreferences.Editor edit = mSharedPreferences.edit();
 
         Gson gson = new Gson();
@@ -50,7 +50,7 @@ public class AppPreferences {
     }
 
     @Nullable
-    public List<Cardapio> loadCardapio() {
+    public List<CardapioDate> loadCardapio() {
         String json = mSharedPreferences.getString(LAST_LIST, null);
 
         if (json == null || json.equals("null")) {
@@ -58,7 +58,7 @@ public class AppPreferences {
         }
 
         Gson gson = new Gson();
-        Type listType = new TypeToken<ArrayList<Cardapio>>() {
+        Type listType = new TypeToken<ArrayList<CardapioDate>>() {
         }.getType();
         return gson.fromJson(json, listType);
     }
